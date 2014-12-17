@@ -20,7 +20,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 
-
+//some comment
 public class MainActivity extends Activity {
 
     private boolean mInit = false;
