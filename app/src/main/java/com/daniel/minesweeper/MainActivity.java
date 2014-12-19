@@ -102,6 +102,7 @@ public class MainActivity extends Activity {
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setDisplayShowHomeEnabled(false);
+
         Typeface myTypeface = Typeface.createFromAsset(getAssets(), "fonts/digital-7.ttf");
         TextView myTextView = (TextView)findViewById(R.id.textView1);
         TextView myTopTextView = (TextView)findViewById(R.id.topTextView1);
@@ -120,13 +121,10 @@ public class MainActivity extends Activity {
     }
 
     private void initial(){
-        ButtonsFragment bFragment = new ButtonsFragment();
         GridFragment gFragment = new GridFragment();
 
-        bFragment.setArguments(getIntent().getExtras());
         gFragment.setArguments(getIntent().getExtras());
 
-        getFragmentManager().beginTransaction().add(R.id.fragment_container, bFragment).commit();
         getFragmentManager().beginTransaction().add(R.id.fragment_container, gFragment).commit();
     }
 
