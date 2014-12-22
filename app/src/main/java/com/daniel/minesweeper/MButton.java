@@ -18,7 +18,9 @@ import android.widget.ImageButton;
 public class MButton extends Button {
 
     boolean pressed = false;
+    boolean flaged = false;
     long startTime = 0;
+    String num;
 
     //runs without a timer by reposting this handler at the end of the runnable
 
@@ -28,7 +30,7 @@ public class MButton extends Button {
         @Override
         public void run() {
             long milliseconds = System.currentTimeMillis() - startTime;
-
+            pressed = true;
             if(milliseconds >= 1500) {
                 pressTile();
                 timerHandler.removeCallbacks(timerRunnable);
@@ -54,14 +56,25 @@ public class MButton extends Button {
     }
 
     private void pressTile(){
-        this.setBackgroundResource(R.drawable.tile3);
-        pressed = true;
+        this.setBackgroundResource(R.drawable.tile);
+        pressed = false;
+        setFlag();
     }
 
-
+    private void setFlag(){
+        if(flaged){
+            flaged = false;
+            this.setText(num);
+        }
+        else{
+            flaged = true;
+            this.setText("F");
+        }
+    }
 
     private void create(String text, int x, int y){
-        this.setText(text);
+        this.num = text;
+        this.setText(num);
         this.setBackgroundResource(R.drawable.tile);
         this.setHeight(50);
         this.setWidth(50);
@@ -79,10 +92,11 @@ public class MButton extends Button {
                         return true;
                     }
                     case MotionEvent.ACTION_UP:{
-                        if(!pressed) {
-                            v.setBackgroundResource(R.drawable.tile);
+                        if(pressed) {
+                            v.setBackgroundResource(R.drawable.tile3);
                             timerHandler.removeCallbacks(timerRunnable);
                         }
+
                         return true;
                     }
                 }
