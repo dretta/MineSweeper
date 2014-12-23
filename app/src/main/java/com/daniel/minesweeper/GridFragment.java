@@ -32,7 +32,7 @@ public class GridFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_grid, container, false);
         GridLayout gridLayout = (GridLayout)view.findViewById(R.id.grid);
-        MButton[] buttons = new MButton[36];
+        MButton[] buttons = new MButton[100];
         int i = 0;
         for(MButton button: buttons){
             button = new MButton(getActivity(),""+i,0,0);

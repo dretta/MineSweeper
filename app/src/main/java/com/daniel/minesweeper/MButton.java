@@ -15,10 +15,12 @@ import android.widget.ImageButton;
 /**
  * Created by Daniel on 11/13/2014.
  */
+
 public class MButton extends Button {
 
-    boolean pressed = false;
-    boolean flaged = false;
+    public enum State{NORMAL, OPENED, FLAGGED, UNKNOWN}
+    State state;
+    boolean longPress;
     long startTime = 0;
     String num;
 
@@ -30,9 +32,9 @@ public class MButton extends Button {
         @Override
         public void run() {
             long milliseconds = System.currentTimeMillis() - startTime;
-            pressed = true;
+            longPress = false;
             if(milliseconds >= 1500) {
-                pressTile();
+                longPressTile();
                 timerHandler.removeCallbacks(timerRunnable);
             }
             else
@@ -55,48 +57,63 @@ public class MButton extends Button {
         create(t, x, y);
     }
 
-    private void pressTile(){
-        this.setBackgroundResource(R.drawable.tile);
-        pressed = false;
-        setFlag();
-    }
-
-    private void setFlag(){
-        if(flaged){
-            flaged = false;
+    private void longPressTile(){
+        longPress = true;
+        setBackgroundResource(R.drawable.tile);
+        if(state == State.FLAGGED || state == State.UNKNOWN){
+            state = State.NORMAL;
             this.setText(num);
         }
-        else{
-            flaged = true;
+        else if(state == State.NORMAL){
+            state = State.FLAGGED;
             this.setText("F");
         }
     }
 
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+
+    }
+
     private void create(String text, int x, int y){
-        this.num = text;
-        this.setText(num);
-        this.setBackgroundResource(R.drawable.tile);
-        this.setHeight(50);
-        this.setWidth(50);
+        state = State.NORMAL;
+        num = text;
+        setText(num);
+        setBackgroundResource(R.drawable.tile);
+        //setHeight(50);
+        //setWidth(50);
+        //setPadding(10,10,10,10);
 
         this.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent me) {
-                switch(me.getAction()) {
+                switch (me.getAction()) {
                     case MotionEvent.ACTION_DOWN: {
-                        if(!pressed) {
+                        if (state != State.OPENED) {
                             startTime = System.currentTimeMillis();
                             v.setBackgroundResource(R.drawable.tile2);
                             timerHandler.postDelayed(timerRunnable, 0);
                         }
                         return true;
                     }
-                    case MotionEvent.ACTION_UP:{
-                        if(pressed) {
-                            v.setBackgroundResource(R.drawable.tile3);
-                            timerHandler.removeCallbacks(timerRunnable);
+                    case MotionEvent.ACTION_UP: {
+                        if (!longPress) {
+                            if (state == State.NORMAL) {
+                                state = State.OPENED;
+                                setText(num);
+                                v.setBackgroundResource(R.drawable.tile3);
+                            } else if (state == State.FLAGGED) {
+                                state = State.UNKNOWN;
+                                v.setBackgroundResource(R.drawable.tile);
+                                setText("?");
+                            } else if (state == State.UNKNOWN) {
+                                state = State.FLAGGED;
+                                v.setBackgroundResource(R.drawable.tile);
+                                setText("F");
+                            }
                         }
-
+                        timerHandler.removeCallbacks(timerRunnable);
                         return true;
                     }
                 }
@@ -104,6 +121,8 @@ public class MButton extends Button {
             }
 
         });
+
+
 
         /*
         this.setOnLongClickListener(new View.OnLongClickListener() {
