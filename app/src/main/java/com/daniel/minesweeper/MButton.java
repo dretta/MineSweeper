@@ -1,16 +1,21 @@
 package com.daniel.minesweeper;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.GridLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 
 /**
  * Created by Daniel on 11/13/2014.
@@ -23,6 +28,7 @@ public class MButton extends Button {
     boolean longPress;
     long startTime = 0;
     String num;
+    final float scale = getContext().getResources().getDisplayMetrics().density;
 
     //runs without a timer by reposting this handler at the end of the runnable
 
@@ -70,10 +76,10 @@ public class MButton extends Button {
         }
     }
 
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
 
+    private void isInGrayArea(float xCoord, float yCoord){
+        Log.d("button"+num,"("+((int) ((xCoord/scale)+0.5))+","+((int) ((yCoord/scale)+0.5))+")");
+        Log.d("size","("+Integer.toString(getWidth())+","+Integer.toString(getHeight())+")");
     }
 
     private void create(String text, int x, int y){
@@ -81,15 +87,20 @@ public class MButton extends Button {
         num = text;
         setText(num);
         setBackgroundResource(R.drawable.tile);
-        //setHeight(50);
-        //setWidth(50);
+        setLayoutParams(new LinearLayout.LayoutParams(150,150));
+        //setMinimumHeight(5);
+        //setMinimumWidth(5);
         //setPadding(10,10,10,10);
+        //Log.d("Height",Integer.toString(getHeight()));
+        //Log.d("Width",Integer.toString(getWidth()));
 
         this.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent me) {
                 switch (me.getAction()) {
                     case MotionEvent.ACTION_DOWN: {
+                        isInGrayArea(me.getX(), me.getY());
+
                         if (state != State.OPENED) {
                             startTime = System.currentTimeMillis();
                             v.setBackgroundResource(R.drawable.tile2);

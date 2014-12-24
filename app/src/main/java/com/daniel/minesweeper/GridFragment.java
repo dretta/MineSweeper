@@ -34,14 +34,11 @@ public class GridFragment extends Fragment {
         GridLayout gridLayout = (GridLayout)view.findViewById(R.id.grid);
         MButton[] buttons = new MButton[100];
         int i = 0;
-        for(MButton button: buttons){
-            button = new MButton(getActivity(),""+i,0,0);
+        for(MButton mButton:buttons){
+            mButton = new MButton(getActivity(),""+i,0,0);
             i++;
-            gridLayout.addView(button);
+            gridLayout.addView(mButton);
         }
-
-
-
         return view;
     }
 

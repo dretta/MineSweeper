@@ -6,7 +6,9 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -109,7 +112,6 @@ public class MainActivity extends Activity {
         myTextView.setTypeface(myTypeface);
         myTopTextView.setTypeface(myTypeface);
 
-
         //Log.d("actionBarSize",""+actionBar.));
 
 
@@ -121,11 +123,27 @@ public class MainActivity extends Activity {
     }
 
     private void initial(){
+
         GridFragment gFragment = new GridFragment();
 
         gFragment.setArguments(getIntent().getExtras());
 
         getFragmentManager().beginTransaction().add(R.id.fragment_container, gFragment).commit();
+
+
+        /*
+        RelativeLayout container = (RelativeLayout)findViewById(R.id.fragment_container);
+        container.addView(new MButton(this,"x",0,0));
+        float f = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,50,getResources().getDisplayMetrics());
+        Log.d("f",Float.toString(f));
+        */
+    }
+
+    public int pixel2dp(float pixel){
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        float logicalDensity = metrics.density;
+        return (int) Math.ceil(pixel / logicalDensity);
     }
 
     @Override
