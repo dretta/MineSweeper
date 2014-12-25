@@ -77,9 +77,12 @@ public class MButton extends Button {
     }
 
 
-    private void isInGrayArea(float xCoord, float yCoord){
-        Log.d("button"+num,"("+((int) ((xCoord/scale)+0.5))+","+((int) ((yCoord/scale)+0.5))+")");
+    private boolean isInGrayArea(float xCoord, float yCoord){
+        int xValue = (int) ((xCoord/scale)+0.5);
+        int yValue = (int) ((yCoord/scale)+0.5);
+        Log.d("button"+num,"("+xValue+","+yValue+")");
         Log.d("size","("+Integer.toString(getWidth())+","+Integer.toString(getHeight())+")");
+        return (xValue >= 5)&&(xValue < 45)&&(yValue >= 5)&&(yValue < 45);
     }
 
     private void create(String text, int x, int y){
@@ -97,35 +100,35 @@ public class MButton extends Button {
         this.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent me) {
-                switch (me.getAction()) {
-                    case MotionEvent.ACTION_DOWN: {
-                        isInGrayArea(me.getX(), me.getY());
-
-                        if (state != State.OPENED) {
-                            startTime = System.currentTimeMillis();
-                            v.setBackgroundResource(R.drawable.tile2);
-                            timerHandler.postDelayed(timerRunnable, 0);
-                        }
-                        return true;
-                    }
-                    case MotionEvent.ACTION_UP: {
-                        if (!longPress) {
-                            if (state == State.NORMAL) {
-                                state = State.OPENED;
-                                setText(num);
-                                v.setBackgroundResource(R.drawable.tile3);
-                            } else if (state == State.FLAGGED) {
-                                state = State.UNKNOWN;
-                                v.setBackgroundResource(R.drawable.tile);
-                                setText("?");
-                            } else if (state == State.UNKNOWN) {
-                                state = State.FLAGGED;
-                                v.setBackgroundResource(R.drawable.tile);
-                                setText("F");
+                if(isInGrayArea(me.getX(), me.getY())){
+                    switch (me.getAction()) {
+                        case MotionEvent.ACTION_DOWN: {
+                            if (state != State.OPENED) {
+                                startTime = System.currentTimeMillis();
+                                v.setBackgroundResource(R.drawable.tile2);
+                                timerHandler.postDelayed(timerRunnable, 0);
                             }
+                            return true;
                         }
-                        timerHandler.removeCallbacks(timerRunnable);
-                        return true;
+                        case MotionEvent.ACTION_UP: {
+                            if (!longPress) {
+                                if (state == State.NORMAL) {
+                                    state = State.OPENED;
+                                    setText(num);
+                                    v.setBackgroundResource(R.drawable.tile3);
+                                } else if (state == State.FLAGGED) {
+                                    state = State.UNKNOWN;
+                                    v.setBackgroundResource(R.drawable.tile);
+                                    setText("?");
+                                } else if (state == State.UNKNOWN) {
+                                    state = State.FLAGGED;
+                                    v.setBackgroundResource(R.drawable.tile);
+                                    setText("F");
+                                }
+                            }
+                            timerHandler.removeCallbacks(timerRunnable);
+                            return true;
+                        }
                     }
                 }
                 return false;
