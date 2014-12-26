@@ -28,6 +28,7 @@ public class MButton extends Button {
     boolean longPress;
     long startTime = 0;
     String num;
+    boolean mine;
     final float scale = getContext().getResources().getDisplayMetrics().density;
 
     //runs without a timer by reposting this handler at the end of the runnable
@@ -48,19 +49,19 @@ public class MButton extends Button {
         }
     };
 
-    public MButton(Context context,String t, int x, int y) {
+    public MButton(Context context,String t, boolean m) {
         super(context);
-        create(t, x, y);
+        create(t, m);
     }
 
-    public MButton(Context context, AttributeSet attrs, String t, int x, int y) {
+    public MButton(Context context, AttributeSet attrs, String t, boolean m) {
         super(context, attrs);
-        create(t, x, y);
+        create(t, m);
     }
 
-    public MButton(Context context, AttributeSet attrs, int defStyleAttr, String t, int x, int y) {
+    public MButton(Context context, AttributeSet attrs, int defStyleAttr, String t, boolean m) {
         super(context, attrs, defStyleAttr);
-        create(t, x, y);
+        create(t, m);
     }
 
     private void longPressTile(){
@@ -68,11 +69,11 @@ public class MButton extends Button {
         setBackgroundResource(R.drawable.tile);
         if(state == State.FLAGGED || state == State.UNKNOWN){
             state = State.NORMAL;
-            this.setText(num);
+            setText("");
         }
         else if(state == State.NORMAL){
             state = State.FLAGGED;
-            this.setText("F");
+            setText("F");
         }
     }
 
@@ -85,10 +86,10 @@ public class MButton extends Button {
         return (xValue >= 5)&&(xValue < 45)&&(yValue >= 5)&&(yValue < 45);
     }
 
-    private void create(String text, int x, int y){
+    private void create(String text, boolean m){
         state = State.NORMAL;
         num = text;
-        setText(num);
+        mine = m;
         setBackgroundResource(R.drawable.tile);
         setLayoutParams(new LinearLayout.LayoutParams(150,150));
         //setMinimumHeight(5);
@@ -112,18 +113,27 @@ public class MButton extends Button {
                         }
                         case MotionEvent.ACTION_UP: {
                             if (!longPress) {
-                                if (state == State.NORMAL) {
-                                    state = State.OPENED;
-                                    setText(num);
-                                    v.setBackgroundResource(R.drawable.tile3);
-                                } else if (state == State.FLAGGED) {
-                                    state = State.UNKNOWN;
-                                    v.setBackgroundResource(R.drawable.tile);
-                                    setText("?");
-                                } else if (state == State.UNKNOWN) {
-                                    state = State.FLAGGED;
-                                    v.setBackgroundResource(R.drawable.tile);
-                                    setText("F");
+                                switch(state){
+                                    case NORMAL:{
+                                        state = State.OPENED;
+                                        if(mine)
+                                            setText("M");
+                                        else
+                                            setText("");
+                                        v.setBackgroundResource(R.drawable.tile3);
+                                        break;
+                                    }
+                                    case UNKNOWN:{
+                                        state = State.UNKNOWN;
+                                        v.setBackgroundResource(R.drawable.tile);
+                                        setText("?");
+                                        break;
+                                    }
+                                    case FLAGGED:{
+                                        state = State.FLAGGED;
+                                        v.setBackgroundResource(R.drawable.tile);
+                                        setText("F");
+                                    }
                                 }
                             }
                             timerHandler.removeCallbacks(timerRunnable);

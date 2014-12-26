@@ -33,14 +33,23 @@ public class GridFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_grid, container, false);
         GridLayout gridLayout = (GridLayout)view.findViewById(R.id.grid);
         MButton[] buttons = new MButton[100];
+        int numOfMines = 25;
         int i = 0;
+        boolean b = true;
+
         for(MButton mButton:buttons){
-            mButton = new MButton(getActivity(),""+i,0,0);
+            mButton = new MButton(getActivity(),""+i,b);
             i++;
+            b = !b;
             gridLayout.addView(mButton);
         }
         return view;
     }
 
+    public void generateGrid(MButton[] buttonList, int minesLeft){
+        /*
+         * TODO: Create an MButton[] filled with button with randomly placed mines.
+         */
+    }
 
 }
