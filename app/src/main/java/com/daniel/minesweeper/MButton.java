@@ -98,6 +98,10 @@ public class MButton extends Button {
         //Log.d("Height",Integer.toString(getHeight()));
         //Log.d("Width",Integer.toString(getWidth()));
 
+        if(mine){
+            setText("m");
+        }
+
         this.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent me) {
