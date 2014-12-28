@@ -25,6 +25,7 @@ import java.util.Random;
 
 public class GridFragment extends Fragment {
 
+    GridLayout gridLayout;
 
     public GridFragment() {
         // Required empty public constructor
@@ -35,7 +36,7 @@ public class GridFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_grid, container, false);
-        GridLayout gridLayout = (GridLayout)view.findViewById(R.id.grid);
+        gridLayout = (GridLayout)view.findViewById(R.id.grid);
         MButton[] buttons = generateGrid(100,25);
         for(MButton mButton:buttons){
             gridLayout.addView(mButton);
@@ -65,7 +66,23 @@ public class GridFragment extends Fragment {
             mButton = new MButton(getActivity(),""+i, numMines > x);
             mButtons[i] = mButton;
         }
-        return mButtons;
+        return generateMineCount(mButtons);
     }
 
+    private MButton[] generateMineCount(MButton[] mButtons){
+        int rows = gridLayout.getRowCount();
+        int columns = gridLayout.getColumnCount();
+        for (int i = 0; i < mButtons.length; i++) {
+            if((i/columns) > 0){if(mButtons[i-columns].isMine()){mButtons[i].addAdjacentMines();}}
+            if((i/columns) < rows-1){if(mButtons[i+columns].isMine()){mButtons[i].addAdjacentMines();}}
+            if((i%rows) > 0){if(mButtons[i-1].isMine()){mButtons[i].addAdjacentMines();}}
+            if((i%rows) < columns-1){if(mButtons[i+1].isMine()){mButtons[i].addAdjacentMines();}}
+            if( ((i/columns) > 0)&&((i%rows) > 0) ){if(mButtons[i-columns-1].isMine()){mButtons[i].addAdjacentMines();}}
+            if( ((i/columns) < rows-1)&&((i%rows) > 0) ){if(mButtons[i+columns-1].isMine()){mButtons[i].addAdjacentMines();}}
+            if( ((i/columns) > 0)&&((i%rows) < columns-1) ){if(mButtons[i-columns+1].isMine()){mButtons[i].addAdjacentMines();}}
+            if( ((i/columns) < rows-1)&&((i%rows) < columns-1) ){if(mButtons[i+columns+1].isMine()){mButtons[i].addAdjacentMines();}}
+            if(!mButtons[i].isMine() && mButtons[i].getAdjacentMines() > 0){mButtons[i].displayMines();}
+        }
+        return mButtons;
+    }
 }

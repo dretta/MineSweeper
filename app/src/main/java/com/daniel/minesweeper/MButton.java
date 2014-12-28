@@ -30,6 +30,7 @@ public class MButton extends Button {
     String num;
     boolean mine;
     final float scale = getContext().getResources().getDisplayMetrics().density;
+    int adjacentMines = 0;
 
     //runs without a timer by reposting this handler at the end of the runnable
 
@@ -86,6 +87,22 @@ public class MButton extends Button {
         return (xValue >= 5)&&(xValue < 45)&&(yValue >= 5)&&(yValue < 45);
     }
 
+    public void addAdjacentMines(){
+        adjacentMines++;
+    }
+
+    public boolean isMine(){
+        return mine;
+    }
+
+    public void displayMines(){
+        setText(""+adjacentMines);
+    }
+
+    public int getAdjacentMines(){
+        return adjacentMines;
+    }
+
     private void create(String text, boolean m){
         state = State.NORMAL;
         num = text;
@@ -101,6 +118,7 @@ public class MButton extends Button {
         if(mine){
             setText("m");
         }
+
 
         this.setOnTouchListener(new View.OnTouchListener() {
             @Override
