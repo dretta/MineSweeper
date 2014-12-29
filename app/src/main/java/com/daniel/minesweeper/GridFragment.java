@@ -63,7 +63,7 @@ public class GridFragment extends Fragment {
 
         for (int i = 0; i < gridSize; i++) {
             int x = array.get(i);
-            mButton = new MButton(getActivity(),""+i, numMines > x);
+            mButton = new MButton(getActivity(),i, numMines > x);
             mButtons[i] = mButton;
         }
         return generateMineCount(mButtons);

@@ -27,7 +27,7 @@ public class MButton extends Button {
     State state;
     boolean longPress;
     long startTime = 0;
-    String num;
+    int num;
     boolean mine;
     final float scale = getContext().getResources().getDisplayMetrics().density;
     int adjacentMines = 0;
@@ -50,19 +50,19 @@ public class MButton extends Button {
         }
     };
 
-    public MButton(Context context,String t, boolean m) {
+    public MButton(Context context, int i, boolean m) {
         super(context);
-        create(t, m);
+        create(i, m);
     }
 
-    public MButton(Context context, AttributeSet attrs, String t, boolean m) {
+    public MButton(Context context, AttributeSet attrs, int i, boolean m) {
         super(context, attrs);
-        create(t, m);
+        create(i, m);
     }
 
-    public MButton(Context context, AttributeSet attrs, int defStyleAttr, String t, boolean m) {
+    public MButton(Context context, AttributeSet attrs, int defStyleAttr, int i, boolean m) {
         super(context, attrs, defStyleAttr);
-        create(t, m);
+        create(i, m);
     }
 
     private void longPressTile(){
@@ -96,16 +96,50 @@ public class MButton extends Button {
     }
 
     public void displayMines(){
-        setText(""+adjacentMines);
+        if(mine)
+            setText("M");
+        else if(hasAdjacentMines())
+            setText(""+adjacentMines);
+        else
+            setText("");
     }
 
     public int getAdjacentMines(){
         return adjacentMines;
     }
 
-    private void create(String text, boolean m){
+    public boolean hasAdjacentMines(){ return getAdjacentMines() > 0;}
+
+    private void openAdjacentButtons(){
+
+        GridLayout gridLayout = (GridLayout)getParent();
+        int rows = gridLayout.getRowCount();
+        int columns = gridLayout.getColumnCount();
+        if((num/columns) > 0){((MButton)gridLayout.getChildAt(num-columns)).revealButton();}
+        if((num/columns) < rows-1){((MButton)gridLayout.getChildAt(num+columns)).revealButton();}
+        if((num%rows) > 0){((MButton)gridLayout.getChildAt(num-1)).revealButton();}
+        if((num%rows) < columns-1){((MButton)gridLayout.getChildAt(num+1)).revealButton();}//
+        if( ((num/columns) > 0)&&((num%rows) > 0) ){((MButton)gridLayout.getChildAt(num-columns-1)).revealButton();}
+        if( ((num/columns) < rows-1)&&((num%rows) > 0) ){((MButton)gridLayout.getChildAt(num+columns-1)).revealButton();}
+        if( ((num/columns) > 0)&&((num%rows) < columns-1) ){((MButton)gridLayout.getChildAt(num-columns+1)).revealButton();}
+        if( ((num/columns) < rows-1)&&((num%rows) < columns-1) ){((MButton)gridLayout.getChildAt(num+columns+1)).revealButton();}
+
+    }
+
+    public void revealButton() {
+        if (state != State.OPENED){
+            state = State.OPENED;
+            displayMines();
+            if (!isMine() && !hasAdjacentMines())
+                openAdjacentButtons();
+            setBackgroundResource(R.drawable.tile3);
+
+        }
+    }
+
+    private void create(int i, boolean m){
         state = State.NORMAL;
-        num = text;
+        num = i;
         mine = m;
         setBackgroundResource(R.drawable.tile);
         setLayoutParams(new LinearLayout.LayoutParams(150,150));
@@ -114,6 +148,7 @@ public class MButton extends Button {
         //setPadding(10,10,10,10);
         //Log.d("Height",Integer.toString(getHeight()));
         //Log.d("Width",Integer.toString(getWidth()));
+
 
         if(mine){
             setText("m");
@@ -137,12 +172,7 @@ public class MButton extends Button {
                             if (!longPress) {
                                 switch(state){
                                     case NORMAL:{
-                                        state = State.OPENED;
-                                        if(mine)
-                                            setText("M");
-                                        else
-                                            setText("");
-                                        v.setBackgroundResource(R.drawable.tile3);
+                                        revealButton();
                                         break;
                                     }
                                     case UNKNOWN:{
