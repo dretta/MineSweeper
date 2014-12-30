@@ -1,5 +1,6 @@
 package com.daniel.minesweeper;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -31,6 +32,7 @@ public class MButton extends Button {
     boolean mine;
     final float scale = getContext().getResources().getDisplayMetrics().density;
     int adjacentMines = 0;
+    ImageButton startButton = (ImageButton)(((Activity)getContext()).getActionBar()).getCustomView().findViewById(R.id.actionBarLogo);
 
     //runs without a timer by reposting this handler at the end of the runnable
 
@@ -68,6 +70,7 @@ public class MButton extends Button {
     private void longPressTile(){
         longPress = true;
         setBackgroundResource(R.drawable.tile);
+        startButton.setImageResource(R.drawable.smiley);
         if(state == State.FLAGGED || state == State.UNKNOWN){
             state = State.NORMAL;
             setText("");
@@ -164,12 +167,14 @@ public class MButton extends Button {
                             if (state != State.OPENED) {
                                 startTime = System.currentTimeMillis();
                                 v.setBackgroundResource(R.drawable.tile2);
+                                startButton.setImageResource(R.drawable.smiley2);
                                 timerHandler.postDelayed(timerRunnable, 0);
                             }
                             return true;
                         }
                         case MotionEvent.ACTION_UP: {
                             if (!longPress) {
+                                startButton.setImageResource(R.drawable.smiley);
                                 switch(state){
                                     case NORMAL:{
                                         revealButton();
