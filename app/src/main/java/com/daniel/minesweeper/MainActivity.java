@@ -128,7 +128,7 @@ public class MainActivity extends Activity {
 
         gFragment.setArguments(getIntent().getExtras());
 
-        getFragmentManager().beginTransaction().add(R.id.fragment_container, gFragment).commit();
+        getFragmentManager().beginTransaction().add(R.id.fragment_container, gFragment,"gridFragment").commit();
 
 
         /*

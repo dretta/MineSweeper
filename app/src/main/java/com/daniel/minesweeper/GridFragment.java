@@ -26,6 +26,8 @@ import java.util.Random;
 public class GridFragment extends Fragment {
 
     GridLayout gridLayout;
+    public enum GameState{READY, PLAYING, WIN, LOSE}
+    GameState gameState;
 
     public GridFragment() {
         // Required empty public constructor
@@ -35,6 +37,7 @@ public class GridFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        gameState = GameState.READY;
         View view = inflater.inflate(R.layout.fragment_grid, container, false);
         gridLayout = (GridLayout)view.findViewById(R.id.grid);
         MButton[] buttons = generateGrid(100,25);
@@ -85,4 +88,17 @@ public class GridFragment extends Fragment {
         }
         return mButtons;
     }
+
+    public void startGame(){
+            gameState = GameState.PLAYING;
+    }
+
+    public void gameOver(){
+        gameState = GameState.LOSE;
+        for (int i = 0; i < gridLayout.getChildCount(); i++) {
+            ((MButton)gridLayout.getChildAt(i)).setOnTouchListener(null);
+        }
+
+    }
+
 }

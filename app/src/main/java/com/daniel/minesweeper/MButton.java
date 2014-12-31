@@ -32,7 +32,9 @@ public class MButton extends Button {
     boolean mine;
     final float scale = getContext().getResources().getDisplayMetrics().density;
     int adjacentMines = 0;
-    ImageButton startButton = (ImageButton)(((Activity)getContext()).getActionBar()).getCustomView().findViewById(R.id.actionBarLogo);
+    MainActivity mainActivity = (MainActivity)getContext();
+    GridFragment gridFragment = (GridFragment)mainActivity.getFragmentManager().findFragmentByTag("gridFragment");
+    ImageButton startButton = (ImageButton)(mainActivity.getActionBar()).getCustomView().findViewById(R.id.actionBarLogo);
 
     //runs without a timer by reposting this handler at the end of the runnable
 
@@ -115,7 +117,7 @@ public class MButton extends Button {
 
     private void openAdjacentButtons(){
 
-        GridLayout gridLayout = (GridLayout)getParent();
+        GridLayout gridLayout = gridFragment.gridLayout;
         int rows = gridLayout.getRowCount();
         int columns = gridLayout.getColumnCount();
         if((num/columns) > 0){((MButton)gridLayout.getChildAt(num-columns)).revealButton();}
@@ -135,6 +137,10 @@ public class MButton extends Button {
             displayMines();
             if (!isMine() && !hasAdjacentMines())
                 openAdjacentButtons();
+            else if(isMine()){
+                startButton.setImageResource(R.drawable.smiley3);
+                gridFragment.gameOver();
+            }
             setBackgroundResource(R.drawable.tile3);
 
         }
@@ -165,6 +171,8 @@ public class MButton extends Button {
                     switch (me.getAction()) {
                         case MotionEvent.ACTION_DOWN: {
                             if (state != State.OPENED) {
+                                if(gridFragment.gameState == GridFragment.GameState.READY)
+                                    gridFragment.startGame();
                                 startTime = System.currentTimeMillis();
                                 v.setBackgroundResource(R.drawable.tile2);
                                 startButton.setImageResource(R.drawable.smiley2);
@@ -202,31 +210,6 @@ public class MButton extends Button {
             }
 
         });
-
-
-
-        /*
-        this.setOnLongClickListener(new View.OnLongClickListener() {
-
-            @Override
-            public boolean onLongClick(View v) {
-                v.setBackgroundResource(R.drawable.tile3);
-                return true;
-            }
-        });
-        */
     }
 
-
-
-
-    /*
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        canvas.drawLine(0, 10, 50, 10, new Paint(Color.BLACK));
-        canvas.drawLine(0, 0, 0, 500, new Paint(Color.BLACK));
-        canvas.drawLine(0, 0, 350, 350, new Paint(Color.BLACK));
-    }
-    */
 }
