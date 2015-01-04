@@ -36,8 +36,6 @@ public class MButton extends Button {
     GridFragment gridFragment = (GridFragment)mainActivity.getFragmentManager().findFragmentByTag("gridFragment");
     ImageButton startButton = (ImageButton)(mainActivity.getActionBar()).getCustomView().findViewById(R.id.actionBarLogo);
 
-    //runs without a timer by reposting this handler at the end of the runnable
-
     static Handler timerHandler = new Handler();
     Runnable timerRunnable = new Runnable() {
 
@@ -139,6 +137,7 @@ public class MButton extends Button {
                 openAdjacentButtons();
             else if(isMine()){
                 startButton.setImageResource(R.drawable.smiley3);
+                Log.d("","gameOver");
                 gridFragment.gameOver();
             }
             setBackgroundResource(R.drawable.tile3);
@@ -152,12 +151,6 @@ public class MButton extends Button {
         mine = m;
         setBackgroundResource(R.drawable.tile);
         setLayoutParams(new LinearLayout.LayoutParams(150,150));
-        //setMinimumHeight(5);
-        //setMinimumWidth(5);
-        //setPadding(10,10,10,10);
-        //Log.d("Height",Integer.toString(getHeight()));
-        //Log.d("Width",Integer.toString(getWidth()));
-
 
         if(mine){
             setText("m");
@@ -185,6 +178,7 @@ public class MButton extends Button {
                                 startButton.setImageResource(R.drawable.smiley);
                                 switch(state){
                                     case NORMAL:{
+                                        Log.d("","revealButton");
                                         revealButton();
                                         break;
                                     }

@@ -1,27 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android:ScrollView
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-    <HorizontalScrollView
+    android:scrollbars="none"
+    android:overScrollMode="never"
+    android:id="@+id/verticalScroll">
+    <HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:scrollbars="none"
-        android:overScrollMode="never">
-
+        android:overScrollMode="never"
+        android:id="@+id/horizontalScroll">
         <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/grid"
-            android:columnCount="10"
-            android:rowCount="10">
-            <!--
-             <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Hello Grid Fragment"
-            />
-            -->
+            android:columnCount="12"
+            android:rowCount="12">
         </GridLayout>
     </HorizontalScrollView>
-</android:ScrollView>
+</ScrollView>
