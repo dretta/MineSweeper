@@ -2,6 +2,7 @@ package com.daniel.minesweeper;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.Fragment;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -26,6 +28,7 @@ import android.widget.TextView;
 public class MainActivity extends Activity {
 
     private boolean mInit = false;
+    private Fragment gridFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +41,23 @@ public class MainActivity extends Activity {
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setDisplayShowHomeEnabled(false);
+        final ImageButton startButton = (ImageButton)(((ViewGroup)actionBar.getCustomView()).findViewById(R.id.actionBarLogo));
+        startButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        startButton.setImageResource(R.drawable.smiley2);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        startButton.setImageResource(R.drawable.smiley);
+                        getFragmentManager().beginTransaction().remove(gridFragment).commit();
+                        startGame();
+                        break;
+                }
+                return false;
+            }
+        });
 
         Typeface myTypeface = Typeface.createFromAsset(getAssets(), "fonts/digital-7.ttf");
         TextView myTextView = (TextView)findViewById(R.id.textView1);
@@ -52,13 +72,13 @@ public class MainActivity extends Activity {
         }
     }
 
-    private void initial(){
+    private void startGame(){
 
-        GridFragment gFragment = new GridFragment();
+        gridFragment = new GridFragment();
 
-        gFragment.setArguments(getIntent().getExtras());
+        gridFragment.setArguments(getIntent().getExtras());
 
-        getFragmentManager().beginTransaction().add(R.id.fragment_container, gFragment,"gridFragment").commit();
+        getFragmentManager().beginTransaction().add(R.id.fragment_container, gridFragment,"gridFragment").commit();
 
     }
 
@@ -66,7 +86,7 @@ public class MainActivity extends Activity {
     protected void onStart() {
         if (!mInit) {
             mInit = true;
-            initial();
+            startGame();
         }
         super.onStart();
     }

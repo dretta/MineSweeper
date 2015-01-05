@@ -32,10 +32,6 @@ public class GridFragment extends Fragment {
     GridLayout gridLayout;
     public enum GameState{READY, PLAYING, WIN, LOSE}
     GameState gameState;
-    private Animator mCurrentAnimator;
-    private int mShortAnimationDuration;
-
-
 
     public GridFragment() {
         // Required empty public constructor
@@ -54,6 +50,7 @@ public class GridFragment extends Fragment {
         }
         return view;
     }
+
 
     public MButton[] generateGrid(int gridSize, int numMines){
         Log.d("gridSize",""+gridSize);
