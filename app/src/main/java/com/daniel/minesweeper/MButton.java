@@ -121,7 +121,7 @@ public class MButton extends Button {
         if((num/columns) > 0){((MButton)gridLayout.getChildAt(num-columns)).revealButton();}
         if((num/columns) < rows-1){((MButton)gridLayout.getChildAt(num+columns)).revealButton();}
         if((num%rows) > 0){((MButton)gridLayout.getChildAt(num-1)).revealButton();}
-        if((num%rows) < columns-1){((MButton)gridLayout.getChildAt(num+1)).revealButton();}//
+        if((num%rows) < columns-1){((MButton)gridLayout.getChildAt(num+1)).revealButton();}
         if( ((num/columns) > 0)&&((num%rows) > 0) ){((MButton)gridLayout.getChildAt(num-columns-1)).revealButton();}
         if( ((num/columns) < rows-1)&&((num%rows) > 0) ){((MButton)gridLayout.getChildAt(num+columns-1)).revealButton();}
         if( ((num/columns) > 0)&&((num%rows) < columns-1) ){((MButton)gridLayout.getChildAt(num-columns+1)).revealButton();}

@@ -29,6 +29,7 @@ public class MainActivity extends Activity {
 
     private boolean mInit = false;
     private Fragment gridFragment;
+    public TextView gameTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +42,9 @@ public class MainActivity extends Activity {
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setDisplayShowHomeEnabled(false);
-        final ImageButton startButton = (ImageButton)(((ViewGroup)actionBar.getCustomView()).findViewById(R.id.actionBarLogo));
+        ViewGroup actionBarViews = (ViewGroup)actionBar.getCustomView();
+        gameTimer = (TextView)actionBarViews.findViewById(R.id.topTextView1);
+        final ImageButton startButton = (ImageButton)(actionBarViews.findViewById(R.id.actionBarLogo));
         startButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {

@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -32,6 +33,22 @@ public class GridFragment extends Fragment {
     GridLayout gridLayout;
     public enum GameState{READY, PLAYING, WIN, LOSE}
     GameState gameState;
+    long gameTime;
+
+    static Handler timerHandler = new Handler();
+    Runnable timerRunnable = new Runnable() {
+
+        @Override
+        public void run() {
+            long milliseconds = System.currentTimeMillis() - gameTime;
+            int seconds = (int) (milliseconds / 1000);
+            if(seconds > 999)
+                seconds = 999;
+            String time = String.format("%03d",seconds);
+            ((MainActivity)getActivity()).gameTimer.setText(time);
+            timerHandler.postDelayed(this, 500);
+        }
+    };
 
     public GridFragment() {
         // Required empty public constructor
@@ -41,6 +58,7 @@ public class GridFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        gameTime = 0;
         gameState = GameState.READY;
         View view = inflater.inflate(R.layout.fragment_grid, container, false);
         gridLayout = (GridLayout)view.findViewById(R.id.grid);
@@ -95,7 +113,9 @@ public class GridFragment extends Fragment {
     }
 
     public void startGame(){
-            gameState = GameState.PLAYING;
+        gameState = GameState.PLAYING;
+        gameTime = System.currentTimeMillis();
+        timerHandler.postDelayed(timerRunnable, 0);
     }
 
     public void gameOver(){
@@ -132,9 +152,6 @@ public class GridFragment extends Fragment {
                 return true;
             }
         });
-        //((ScrollView)getActivity().findViewById(R.id.verticalScroll)).smoothScrollTo(0,0);
-        //((HorizontalScrollView)getActivity().findViewById(R.id.horizontalScroll)).smoothScrollTo(0,0);
-        //((ScrollView)getActivity().findViewById(R.id.verticalScroll)).
     }
 
 }
