@@ -30,6 +30,7 @@ public class MainActivity extends Activity {
     private boolean mInit = false;
     private Fragment gridFragment;
     public TextView gameTimer;
+    public TextView mineCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +44,8 @@ public class MainActivity extends Activity {
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setDisplayShowHomeEnabled(false);
         ViewGroup actionBarViews = (ViewGroup)actionBar.getCustomView();
-        gameTimer = (TextView)actionBarViews.findViewById(R.id.topTextView1);
+        mineCount = (TextView)actionBarViews.findViewById(R.id.topTextView1);
+        gameTimer = (TextView)actionBarViews.findViewById(R.id.topTextView2);
         final ImageButton startButton = (ImageButton)(actionBarViews.findViewById(R.id.actionBarLogo));
         startButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -55,6 +57,7 @@ public class MainActivity extends Activity {
                     case MotionEvent.ACTION_UP:
                         startButton.setImageResource(R.drawable.smiley);
                         getFragmentManager().beginTransaction().remove(gridFragment).commit();
+                        gameTimer.setText("999");
                         startGame();
                         break;
                 }
@@ -63,10 +66,14 @@ public class MainActivity extends Activity {
         });
 
         Typeface myTypeface = Typeface.createFromAsset(getAssets(), "fonts/digital-7.ttf");
-        TextView myTextView = (TextView)findViewById(R.id.textView1);
-        TextView myTopTextView = (TextView)findViewById(R.id.topTextView1);
-        myTextView.setTypeface(myTypeface);
-        myTopTextView.setTypeface(myTypeface);
+        TextView textView = (TextView)findViewById(R.id.textView1);
+        textView.setTypeface(myTypeface);
+        textView = (TextView)findViewById(R.id.topTextView1);
+        textView.setTypeface(myTypeface);
+        textView = (TextView)findViewById(R.id.textView2);
+        textView.setTypeface(myTypeface);
+        textView = (TextView)findViewById(R.id.topTextView2);
+        textView.setTypeface(myTypeface);
 
         if (findViewById(R.id.fragment_container) != null){
             if (savedInstanceState != null) {

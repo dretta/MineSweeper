@@ -44,8 +44,7 @@ public class GridFragment extends Fragment {
             int seconds = (int) (milliseconds / 1000);
             if(seconds > 999)
                 seconds = 999;
-            String time = String.format("%03d",seconds);
-            ((MainActivity)getActivity()).gameTimer.setText(time);
+            ((MainActivity)getActivity()).gameTimer.setText(String.format("%03d",seconds));
             timerHandler.postDelayed(this, 500);
         }
     };
@@ -58,11 +57,13 @@ public class GridFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        gameTime = 0;
-        gameState = GameState.READY;
         View view = inflater.inflate(R.layout.fragment_grid, container, false);
+        gameState = GameState.READY;
+        int numOfMines = 25;
+        //String.format("%03d",numOfMines)
+        ((MainActivity)getActivity()).mineCount.setText("111");
         gridLayout = (GridLayout)view.findViewById(R.id.grid);
-        MButton[] buttons = generateGrid(144,25);
+        MButton[] buttons = generateGrid(144,numOfMines);
         for(MButton mButton:buttons){
             gridLayout.addView(mButton);
         }
@@ -120,6 +121,7 @@ public class GridFragment extends Fragment {
 
     public void gameOver(){
         gameState = GameState.LOSE;
+        timerHandler.removeCallbacks(timerRunnable);
         for (int i = 0; i < gridLayout.getChildCount(); i++) {
             MButton mb = (MButton)gridLayout.getChildAt(i);
             mb.setOnTouchListener(null);
