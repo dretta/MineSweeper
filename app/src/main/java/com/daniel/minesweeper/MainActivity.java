@@ -44,9 +44,9 @@ public class MainActivity extends Activity {
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setDisplayShowHomeEnabled(false);
         ViewGroup actionBarViews = (ViewGroup)actionBar.getCustomView();
-        mineCount = (TextView)actionBarViews.findViewById(R.id.topTextView1);
-        gameTimer = (TextView)actionBarViews.findViewById(R.id.topTextView2);
         final ImageButton startButton = (ImageButton)(actionBarViews.findViewById(R.id.actionBarLogo));
+        mineCount = (TextView)actionBarViews.findViewById(R.id.topTextViewLeft);
+        gameTimer = (TextView)actionBarViews.findViewById(R.id.topTextViewRight);
         startButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -57,7 +57,7 @@ public class MainActivity extends Activity {
                     case MotionEvent.ACTION_UP:
                         startButton.setImageResource(R.drawable.smiley);
                         getFragmentManager().beginTransaction().remove(gridFragment).commit();
-                        gameTimer.setText("999");
+                        setText(999,gameTimer);
                         startGame();
                         break;
                 }
@@ -65,15 +65,14 @@ public class MainActivity extends Activity {
             }
         });
 
-        Typeface myTypeface = Typeface.createFromAsset(getAssets(), "fonts/digital-7.ttf");
-        TextView textView = (TextView)findViewById(R.id.textView1);
-        textView.setTypeface(myTypeface);
-        textView = (TextView)findViewById(R.id.topTextView1);
-        textView.setTypeface(myTypeface);
-        textView = (TextView)findViewById(R.id.textView2);
-        textView.setTypeface(myTypeface);
-        textView = (TextView)findViewById(R.id.topTextView2);
-        textView.setTypeface(myTypeface);
+        Typeface myTypeface = Typeface.createFromAsset(getAssets(), "fonts/digital-7 (mono).ttf");
+        TextView textView;
+        int[] resources =
+                {R.id.textViewLeft,R.id.topTextViewLeft,R.id.textViewRight,R.id.topTextViewRight};
+        for(int r: resources) {
+            textView = (TextView) findViewById(r);
+            textView.setTypeface(myTypeface);
+        }
 
         if (findViewById(R.id.fragment_container) != null){
             if (savedInstanceState != null) {
@@ -90,6 +89,12 @@ public class MainActivity extends Activity {
 
         getFragmentManager().beginTransaction().add(R.id.fragment_container, gridFragment,"gridFragment").commit();
 
+    }
+
+    public void setText(int value, TextView textView){
+        value = Math.min(999,value);
+        value = Math.max(-99,value);
+        textView.setText(String.format("%03d",value));
     }
 
     @Override

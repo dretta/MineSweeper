@@ -24,7 +24,7 @@ android:gravity="center">
         android:textColor="@android:color/holo_red_dark"
         android:background="@android:color/black"
         android:alpha=".25"
-        android:id="@+id/textView1"
+        android:id="@+id/textViewLeft"
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@+id/actionBarLogo" />
 
@@ -34,7 +34,8 @@ android:gravity="center">
         android:textSize="?android:attr/actionBarSize"
         android:textColor="@android:color/holo_red_dark"
         android:background="@android:color/transparent"
-        android:id="@+id/topTextView1"
+        android:id="@+id/topTextViewLeft"
+        android:text="099"
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@+id/actionBarLogo" />
 
@@ -46,7 +47,7 @@ android:gravity="center">
         android:textColor="@android:color/holo_red_dark"
         android:background="@android:color/black"
         android:alpha=".25"
-        android:id="@+id/textView2"
+        android:id="@+id/textViewRight"
         android:layout_centerVertical="true"
         android:layout_toRightOf="@+id/actionBarLogo" />
 
@@ -57,7 +58,7 @@ android:gravity="center">
         android:textSize="?android:attr/actionBarSize"
         android:textColor="@android:color/holo_red_dark"
         android:background="@android:color/transparent"
-        android:id="@+id/topTextView2"
+        android:id="@+id/topTextViewRight"
         android:layout_centerVertical="true"
         android:layout_toRightOf="@+id/actionBarLogo" />
 

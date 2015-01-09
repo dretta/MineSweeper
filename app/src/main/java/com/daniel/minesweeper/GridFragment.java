@@ -22,6 +22,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,6 +35,7 @@ public class GridFragment extends Fragment {
     public enum GameState{READY, PLAYING, WIN, LOSE}
     GameState gameState;
     long gameTime;
+    MainActivity mainActivity;
 
     static Handler timerHandler = new Handler();
     Runnable timerRunnable = new Runnable() {
@@ -44,24 +46,25 @@ public class GridFragment extends Fragment {
             int seconds = (int) (milliseconds / 1000);
             if(seconds > 999)
                 seconds = 999;
-            ((MainActivity)getActivity()).gameTimer.setText(String.format("%03d",seconds));
+            TextView textView = ((MainActivity)getActivity()).gameTimer;
+
+            mainActivity.setText(seconds, textView);
             timerHandler.postDelayed(this, 500);
         }
     };
 
-    public GridFragment() {
-        // Required empty public constructor
-    }
+    public GridFragment() {}
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_grid, container, false);
+        mainActivity = (MainActivity)getActivity();
         gameState = GameState.READY;
         int numOfMines = 25;
         //String.format("%03d",numOfMines)
-        ((MainActivity)getActivity()).mineCount.setText("111");
+        //((MainActivity)getActivity()).setText(111, MainActivity.Text.MINES);
         gridLayout = (GridLayout)view.findViewById(R.id.grid);
         MButton[] buttons = generateGrid(144,numOfMines);
         for(MButton mButton:buttons){
@@ -117,6 +120,22 @@ public class GridFragment extends Fragment {
         gameState = GameState.PLAYING;
         gameTime = System.currentTimeMillis();
         timerHandler.postDelayed(timerRunnable, 0);
+        /*
+        int textSize = (((MainActivity)getActivity()).findViewById(R.id.textViewLeft)).getWidth()/3;
+        ViewGroup.LayoutParams params;
+        TextView tLeft0 = (TextView)(((MainActivity) getActivity()).findViewById(R.id.topTextViewLeft0));
+        TextView tLeft1 = (TextView)(((MainActivity) getActivity()).findViewById(R.id.topTextViewLeft1));
+        TextView tLeft2 = (TextView)(((MainActivity) getActivity()).findViewById(R.id.topTextViewLeft2));
+        params = tLeft0.getLayoutParams();
+        params.width = textSize;
+        tLeft0.setLayoutParams(params);
+        params = tLeft1.getLayoutParams();
+        params.width = textSize;
+        tLeft1.setLayoutParams(params);
+        params = tLeft2.getLayoutParams();
+        params.width = textSize;
+        tLeft2.setLayoutParams(params);
+        */
     }
 
     public void gameOver(){
