@@ -43,7 +43,8 @@ public class MButton extends Button {
         public void run() {
             long milliseconds = System.currentTimeMillis() - startTime;
             longPress = false;
-            if(milliseconds >= 1500) {
+
+            if(milliseconds >= 1000) {
                 longPressTile();
                 timerHandler.removeCallbacks(timerRunnable);
             }
@@ -93,8 +94,8 @@ public class MButton extends Button {
     private boolean isInGrayArea(float xCoord, float yCoord){
         int xValue = (int) ((xCoord/scale)+0.5);
         int yValue = (int) ((yCoord/scale)+0.5);
-        Log.d("button"+num,"("+xValue+","+yValue+")");
-        Log.d("size","("+Integer.toString(getWidth())+","+Integer.toString(getHeight())+")");
+        //Log.d("button"+num,"("+xValue+","+yValue+")");
+        //Log.d("size","("+Integer.toString(getWidth())+","+Integer.toString(getHeight())+")");
         return (xValue >= 5)&&(xValue < 45)&&(yValue >= 5)&&(yValue < 45);
     }
 
@@ -140,13 +141,13 @@ public class MButton extends Button {
     public void revealButton() {
         if (state != State.OPENED){
             state = State.OPENED;
+            gridFragment.unOpenedButtons--;
             displayMines();
             if (!isMine() && !hasAdjacentMines())
                 openAdjacentButtons();
             else if(isMine()){
-                startButton.setImageResource(R.drawable.smiley3);
-                Log.d("","gameOver");
-                gridFragment.gameOver();
+                Log.d("","gameLost");
+                gridFragment.gameLost();
             }
             setBackgroundResource(R.drawable.tile3);
 
@@ -207,6 +208,7 @@ public class MButton extends Button {
                                     }
                                 }
                             }
+                            gridFragment.checkGameWin();
                             Log.d("State",state.toString());
                             timerHandler.removeCallbacks(timerRunnable);
                             return true;

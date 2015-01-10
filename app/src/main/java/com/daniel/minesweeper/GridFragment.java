@@ -36,7 +36,7 @@ public class GridFragment extends Fragment {
     GameState gameState;
     long gameTime;
     MainActivity mainActivity;
-    int remainingMines;
+    int remainingMines, numOfMines, unOpenedButtons;
 
     static Handler timerHandler = new Handler();
     Runnable timerRunnable = new Runnable() {
@@ -63,11 +63,13 @@ public class GridFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_grid, container, false);
         mainActivity = (MainActivity)getActivity();
         gameState = GameState.READY;
-        int numOfMines = 25;
+        numOfMines = 25;
         remainingMines = numOfMines;
+        int numOfButtons = 144;
         mainActivity.setText(numOfMines,mainActivity.mineCount);
         gridLayout = (GridLayout)view.findViewById(R.id.grid);
-        MButton[] buttons = generateGrid(144,numOfMines);
+        MButton[] buttons = generateGrid(numOfButtons,numOfMines);
+        unOpenedButtons = numOfButtons - numOfMines;
         for(MButton mButton:buttons){
             gridLayout.addView(mButton);
         }
@@ -139,8 +141,28 @@ public class GridFragment extends Fragment {
         */
     }
 
-    public void gameOver(){
+
+    public void checkGameWin(){
+        Log.d("(upOpened,mines)","("+unOpenedButtons+","+remainingMines+")");
+        if(unOpenedButtons == 0 && remainingMines == 0){
+            gameWon();
+        }
+    }
+
+    public void gameWon(){
+        gameState = GameState.WIN;
+        mainActivity.startButton.setImageResource(R.drawable.smiley4);
+        endGame();
+    }
+
+    public void gameLost(){
         gameState = GameState.LOSE;
+        mainActivity.startButton.setImageResource(R.drawable.smiley3);
+        endGame();
+    }
+
+
+    public void endGame(){
         timerHandler.removeCallbacks(timerRunnable);
         for (int i = 0; i < gridLayout.getChildCount(); i++) {
             MButton mb = (MButton)gridLayout.getChildAt(i);

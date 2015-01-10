@@ -29,6 +29,7 @@ public class MainActivity extends Activity {
 
     private boolean mInit = false;
     private Fragment gridFragment;
+    public ImageButton startButton;
     public TextView gameTimer;
     public TextView mineCount;
 
@@ -44,7 +45,7 @@ public class MainActivity extends Activity {
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setDisplayShowHomeEnabled(false);
         ViewGroup actionBarViews = (ViewGroup)actionBar.getCustomView();
-        final ImageButton startButton = (ImageButton)(actionBarViews.findViewById(R.id.actionBarLogo));
+        startButton = (ImageButton)(actionBarViews.findViewById(R.id.actionBarLogo));
         mineCount = (TextView)actionBarViews.findViewById(R.id.topTextViewLeft);
         gameTimer = (TextView)actionBarViews.findViewById(R.id.topTextViewRight);
         startButton.setOnTouchListener(new View.OnTouchListener() {
