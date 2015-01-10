@@ -36,6 +36,7 @@ public class GridFragment extends Fragment {
     GameState gameState;
     long gameTime;
     MainActivity mainActivity;
+    int remainingMines;
 
     static Handler timerHandler = new Handler();
     Runnable timerRunnable = new Runnable() {
@@ -63,8 +64,8 @@ public class GridFragment extends Fragment {
         mainActivity = (MainActivity)getActivity();
         gameState = GameState.READY;
         int numOfMines = 25;
-        //String.format("%03d",numOfMines)
-        //((MainActivity)getActivity()).setText(111, MainActivity.Text.MINES);
+        remainingMines = numOfMines;
+        mainActivity.setText(numOfMines,mainActivity.mineCount);
         gridLayout = (GridLayout)view.findViewById(R.id.grid);
         MButton[] buttons = generateGrid(144,numOfMines);
         for(MButton mButton:buttons){

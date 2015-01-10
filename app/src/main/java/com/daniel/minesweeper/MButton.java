@@ -71,13 +71,21 @@ public class MButton extends Button {
         longPress = true;
         setBackgroundResource(R.drawable.tile);
         startButton.setImageResource(R.drawable.smiley);
-        if(state == State.FLAGGED || state == State.UNKNOWN){
+        if(state == State.FLAGGED){
+            state = State.NORMAL;
+            setText("");
+            gridFragment.remainingMines++;
+            mainActivity.setText(gridFragment.remainingMines,mainActivity.mineCount);
+        }
+        else if(state == State.UNKNOWN){
             state = State.NORMAL;
             setText("");
         }
         else if(state == State.NORMAL){
             state = State.FLAGGED;
             setText("F");
+            gridFragment.remainingMines--;
+            mainActivity.setText(gridFragment.remainingMines,mainActivity.mineCount);
         }
     }
 
@@ -183,18 +191,23 @@ public class MButton extends Button {
                                         break;
                                     }
                                     case UNKNOWN:{
-                                        state = State.UNKNOWN;
+                                        state = State.FLAGGED;
+                                        gridFragment.remainingMines--;
+                                        mainActivity.setText(gridFragment.remainingMines,mainActivity.mineCount);
                                         v.setBackgroundResource(R.drawable.tile);
-                                        setText("?");
+                                        setText("F");
                                         break;
                                     }
                                     case FLAGGED:{
-                                        state = State.FLAGGED;
+                                        state = State.UNKNOWN;
+                                        gridFragment.remainingMines++;
+                                        mainActivity.setText(gridFragment.remainingMines,mainActivity.mineCount);
                                         v.setBackgroundResource(R.drawable.tile);
-                                        setText("F");
+                                        setText("?");
                                     }
                                 }
                             }
+                            Log.d("State",state.toString());
                             timerHandler.removeCallbacks(timerRunnable);
                             return true;
                         }
