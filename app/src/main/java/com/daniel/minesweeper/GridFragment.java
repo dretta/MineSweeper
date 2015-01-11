@@ -2,7 +2,9 @@ package com.daniel.minesweeper;
 
 
 import android.animation.Animator;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -63,7 +65,7 @@ public class GridFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_grid, container, false);
         mainActivity = (MainActivity)getActivity();
         gameState = GameState.READY;
-        numOfMines = 25;
+        numOfMines = 5;
         remainingMines = numOfMines;
         int numOfButtons = 144;
         mainActivity.setText(numOfMines,mainActivity.mineCount);
@@ -153,6 +155,38 @@ public class GridFragment extends Fragment {
         gameState = GameState.WIN;
         mainActivity.startButton.setImageResource(R.drawable.smiley4);
         endGame();
+        winAlert();
+    }
+
+    private void winAlert() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                getActivity());
+
+        // set title
+        alertDialogBuilder.setTitle("Your Title");
+
+        // set dialog message
+        alertDialogBuilder
+                .setTitle("Game Won!")
+                .setCancelable(false)
+                .setPositiveButton("New",new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int id) {
+                        mainActivity.restartGame();
+                    }
+                })
+                .setNegativeButton("Ok",new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int id) {
+                        // if this button is clicked, just close
+                        // the dialog box and do nothing
+                        dialog.cancel();
+                    }
+                });
+
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
     }
 
     public void gameLost(){

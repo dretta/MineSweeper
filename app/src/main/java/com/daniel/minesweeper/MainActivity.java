@@ -56,10 +56,7 @@ public class MainActivity extends Activity {
                         startButton.setImageResource(R.drawable.smiley2);
                         break;
                     case MotionEvent.ACTION_UP:
-                        startButton.setImageResource(R.drawable.smiley);
-                        getFragmentManager().beginTransaction().remove(gridFragment).commit();
-                        setText(999,gameTimer);
-                        startGame();
+                        restartGame();
                         break;
                 }
                 return false;
@@ -80,6 +77,13 @@ public class MainActivity extends Activity {
                 return;
             }
         }
+    }
+
+    public void restartGame() {
+        startButton.setImageResource(R.drawable.smiley);
+        getFragmentManager().beginTransaction().remove(gridFragment).commit();
+        setText(999, gameTimer);
+        startGame();
     }
 
     private void startGame(){
