@@ -36,7 +36,7 @@ public class GridFragment extends Fragment {
     GridLayout gridLayout;
     public enum GameState{READY, PLAYING, WIN, LOSE}
     GameState gameState;
-    long gameTime;
+    long gameTime, milliseconds;
     MainActivity mainActivity;
     int remainingMines, numOfMines, unOpenedButtons;
 
@@ -45,7 +45,7 @@ public class GridFragment extends Fragment {
 
         @Override
         public void run() {
-            long milliseconds = System.currentTimeMillis() - gameTime;
+            milliseconds = System.currentTimeMillis() - gameTime;
             int seconds = (int) (milliseconds / 1000);
             if(seconds > 999)
                 seconds = 999;
@@ -154,6 +154,7 @@ public class GridFragment extends Fragment {
     public void gameWon(){
         gameState = GameState.WIN;
         mainActivity.startButton.setImageResource(R.drawable.smiley4);
+        mainActivity.increaseWins();
         endGame();
         winAlert();
     }
@@ -168,6 +169,8 @@ public class GridFragment extends Fragment {
         // set dialog message
         alertDialogBuilder
                 .setTitle("Game Won!")
+                .setMessage("Wins:\t"+mainActivity.getWins()+
+                        "\nLoses:\t"+mainActivity.getLoses())
                 .setCancelable(false)
                 .setPositiveButton("New",new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog,int id) {
@@ -192,6 +195,7 @@ public class GridFragment extends Fragment {
     public void gameLost(){
         gameState = GameState.LOSE;
         mainActivity.startButton.setImageResource(R.drawable.smiley3);
+        mainActivity.increaseLoses();
         endGame();
     }
 

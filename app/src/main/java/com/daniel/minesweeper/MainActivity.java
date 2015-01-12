@@ -29,6 +29,8 @@ public class MainActivity extends Activity {
 
     private boolean mInit = false;
     private Fragment gridFragment;
+    private int wins;
+    private int loses;
     public ImageButton startButton;
     public TextView gameTimer;
     public TextView mineCount;
@@ -71,12 +73,28 @@ public class MainActivity extends Activity {
             textView = (TextView) findViewById(r);
             textView.setTypeface(myTypeface);
         }
+        wins = 0;
+        loses = 0;
+
 
         if (findViewById(R.id.fragment_container) != null){
             if (savedInstanceState != null) {
                 return;
             }
         }
+    }
+
+    public void increaseWins(){
+        wins++;
+    }
+    public void increaseLoses(){
+        loses++;
+    }
+    public int getWins(){
+        return wins;
+    }
+    public int getLoses(){
+        return loses;
     }
 
     public void restartGame() {
