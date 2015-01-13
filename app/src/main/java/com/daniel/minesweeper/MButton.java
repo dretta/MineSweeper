@@ -76,6 +76,9 @@ public class MButton extends Button {
             state = State.NORMAL;
             setText("");
             gridFragment.remainingMines++;
+            if(isMine()){
+                gridFragment.flagsOnMines--;
+            }
             mainActivity.setText(gridFragment.remainingMines,mainActivity.mineCount);
         }
         else if(state == State.UNKNOWN){
@@ -86,6 +89,9 @@ public class MButton extends Button {
             state = State.FLAGGED;
             setText("F");
             gridFragment.remainingMines--;
+            if(isMine()){
+                gridFragment.flagsOnMines++;
+            }
             mainActivity.setText(gridFragment.remainingMines,mainActivity.mineCount);
         }
     }
@@ -194,6 +200,9 @@ public class MButton extends Button {
                                     case UNKNOWN:{
                                         state = State.FLAGGED;
                                         gridFragment.remainingMines--;
+                                        if(isMine()){
+                                            gridFragment.flagsOnMines++;
+                                        }
                                         mainActivity.setText(gridFragment.remainingMines,mainActivity.mineCount);
                                         v.setBackgroundResource(R.drawable.tile);
                                         setText("F");
@@ -202,6 +211,9 @@ public class MButton extends Button {
                                     case FLAGGED:{
                                         state = State.UNKNOWN;
                                         gridFragment.remainingMines++;
+                                        if(isMine()){
+                                            gridFragment.flagsOnMines--;
+                                        }
                                         mainActivity.setText(gridFragment.remainingMines,mainActivity.mineCount);
                                         v.setBackgroundResource(R.drawable.tile);
                                         setText("?");

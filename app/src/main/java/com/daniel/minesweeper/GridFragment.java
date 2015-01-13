@@ -38,7 +38,7 @@ public class GridFragment extends Fragment {
     GameState gameState;
     long gameTime, milliseconds;
     MainActivity mainActivity;
-    int remainingMines, numOfMines, unOpenedButtons;
+    int remainingMines, numOfMines, unOpenedButtons, flagsOnMines, numOfButtons;
 
     static Handler timerHandler = new Handler();
     Runnable timerRunnable = new Runnable() {
@@ -67,7 +67,7 @@ public class GridFragment extends Fragment {
         gameState = GameState.READY;
         numOfMines = 5;
         remainingMines = numOfMines;
-        int numOfButtons = 144;
+        numOfButtons = 144;
         mainActivity.setText(numOfMines,mainActivity.mineCount);
         gridLayout = (GridLayout)view.findViewById(R.id.grid);
         MButton[] buttons = generateGrid(numOfButtons,numOfMines);
@@ -154,7 +154,9 @@ public class GridFragment extends Fragment {
     public void gameWon(){
         gameState = GameState.WIN;
         mainActivity.startButton.setImageResource(R.drawable.smiley4);
-        mainActivity.increaseWins();
+        Database db = new Database(mainActivity);
+        db.addSession(new Session(db.getSessionsCount()+1,true,milliseconds*1000,1.0f));
+        db.close();
         endGame();
         winAlert();
     }
@@ -166,11 +168,14 @@ public class GridFragment extends Fragment {
         // set title
         alertDialogBuilder.setTitle("Your Title");
 
+        Database db = new Database(mainActivity);
+
         // set dialog message
         alertDialogBuilder
                 .setTitle("Game Won!")
-                .setMessage("Wins:\t"+mainActivity.getWins()+
-                        "\nLoses:\t"+mainActivity.getLoses())
+                .setMessage("Wins:\t"+db.getAllSessionsCountByResult(true)+
+                        "\nLoses:\t"+db.getAllSessionsCountByResult(false)+
+                        "\nTime:\t"+(db.getSession(db.getSessionsCount())).getTime())
                 .setCancelable(false)
                 .setPositiveButton("New",new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog,int id) {
@@ -184,7 +189,7 @@ public class GridFragment extends Fragment {
                         dialog.cancel();
                     }
                 });
-
+        db.close();
         // create alert dialog
         AlertDialog alertDialog = alertDialogBuilder.create();
 
@@ -195,7 +200,9 @@ public class GridFragment extends Fragment {
     public void gameLost(){
         gameState = GameState.LOSE;
         mainActivity.startButton.setImageResource(R.drawable.smiley3);
-        mainActivity.increaseLoses();
+        Database db = new Database(mainActivity);
+        db.addSession(new Session(db.getSessionsCount() + 1, false, 0.0f, ((numOfButtons - unOpenedButtons + flagsOnMines) / numOfMines)));
+        db.close();
         endGame();
     }
 
