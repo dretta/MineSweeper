@@ -3,10 +3,12 @@ package com.daniel.minesweeper;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.ContactsContract;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -106,6 +108,9 @@ public class MainActivity extends Activity {
     protected void onStart() {
         if (!mInit) {
             mInit = true;
+            Database db = new Database(this);
+            db.deleteAllSessions();
+            db.close();
             startGame();
         }
         super.onStart();

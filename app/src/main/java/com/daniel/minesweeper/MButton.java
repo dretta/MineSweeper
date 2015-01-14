@@ -193,7 +193,7 @@ public class MButton extends Button {
                                 startButton.setImageResource(R.drawable.smiley);
                                 switch(state){
                                     case NORMAL:{
-                                        Log.d("","revealButton");
+                                        //Log.d("","revealButton");
                                         revealButton();
                                         break;
                                     }
@@ -221,7 +221,7 @@ public class MButton extends Button {
                                 }
                             }
                             gridFragment.checkGameWin();
-                            Log.d("State",state.toString());
+                            //Log.d("State",state.toString());
                             timerHandler.removeCallbacks(timerRunnable);
                             return true;
                         }

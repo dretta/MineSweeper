@@ -145,7 +145,7 @@ public class GridFragment extends Fragment {
 
 
     public void checkGameWin(){
-        Log.d("(upOpened,mines)","("+unOpenedButtons+","+remainingMines+")");
+        //Log.d("(upOpened,mines)","("+unOpenedButtons+","+remainingMines+")");
         if(unOpenedButtons == 0 && remainingMines == 0){
             gameWon();
         }
@@ -155,7 +155,7 @@ public class GridFragment extends Fragment {
         gameState = GameState.WIN;
         mainActivity.startButton.setImageResource(R.drawable.smiley4);
         Database db = new Database(mainActivity);
-        db.addSession(new Session(db.getSessionsCount()+1,true,milliseconds*1000,1.0f));
+        db.addSession(new Session(db.getSessionsCount()+1,true,milliseconds/1000.0f,1.0f));
         db.close();
         endGame();
         winAlert();
@@ -173,9 +173,13 @@ public class GridFragment extends Fragment {
         // set dialog message
         alertDialogBuilder
                 .setTitle("Game Won!")
-                .setMessage("Wins:\t"+db.getAllSessionsCountByResult(true)+
-                        "\nLoses:\t"+db.getAllSessionsCountByResult(false)+
-                        "\nTime:\t"+(db.getSession(db.getSessionsCount())).getTime())
+                .setMessage("Time:  "+(db.getSession(db.getSessionsCount())).getTime()+
+                        "\nBest Time:   "+db.getBestTime()+
+                        "\nAverage Time:    "+db.getAverageTime()+
+                        "\nWin percentage:  "+((float)db.getAllSessionsCountByResult(true)/(float)db.getSessionsCount())+
+                        "\nExploration percentage:  "+Float.toString(db.getExplorationPercent())+"%"+
+                        "\nGames Won:  "+db.getAllSessionsCountByResult(true)+
+                        "\nGame Played:   "+db.getSessionsCount())
                 .setCancelable(false)
                 .setPositiveButton("New",new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog,int id) {
@@ -201,7 +205,8 @@ public class GridFragment extends Fragment {
         gameState = GameState.LOSE;
         mainActivity.startButton.setImageResource(R.drawable.smiley3);
         Database db = new Database(mainActivity);
-        db.addSession(new Session(db.getSessionsCount() + 1, false, 0.0f, ((numOfButtons - unOpenedButtons + flagsOnMines) / numOfMines)));
+        float explorationPercent = ((float)numOfButtons - (float)numOfMines - (float)unOpenedButtons + (float)flagsOnMines)/(float)numOfButtons;
+        db.addSession(new Session(db.getSessionsCount() + 1, false, 0.0f, explorationPercent));
         db.close();
         endGame();
     }
@@ -221,12 +226,12 @@ public class GridFragment extends Fragment {
         float yScale = Math.max((float) getActivity().findViewById(R.id.fragment_container).getHeight() / gridLayout.getWidth(), params.height);
         gridLayout.setScaleX(xScale);
         gridLayout.setScaleY(yScale);
-        Log.d("(ScrollScaleX,GridPivotX)","("+horizontal.getScrollX()+","+gridLayout.getScaleX()+")");
-        Log.d("(ScrollScaleY,GridPivotY)","("+vertical.getScrollY()+","+gridLayout.getScaleY()+")");
+        //Log.d("(ScrollScaleX,GridPivotX)","("+horizontal.getScrollX()+","+gridLayout.getScaleX()+")");
+        //Log.d("(ScrollScaleY,GridPivotY)","("+vertical.getScrollY()+","+gridLayout.getScaleY()+")");
         float xPivot = 2.5f*horizontal.getScrollX();
         float yPivot = 18.0f*vertical.getScrollY();
-        Log.d("totalPivotX",""+xPivot);
-        Log.d("totalPivotY",""+yPivot);
+        //Log.d("totalPivotX",""+xPivot);
+        //Log.d("totalPivotY",""+yPivot);
         gridLayout.setPivotX(xPivot);
         gridLayout.setPivotY(yPivot);
         vertical.setOnTouchListener(new View.OnTouchListener() {

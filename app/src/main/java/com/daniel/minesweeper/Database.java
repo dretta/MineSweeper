@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,7 +74,8 @@ public class Database extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(KEY_ID,session.getId());
         values.put(KEY_RESULT,session.getResult()?1:0);
-        values.put(KEY_TIME,session.getTime());
+        values.put(KEY_TIME,(session.getTime()!=0.0f?session.getTime():null));
+        Log.d("ADD_EX",""+session.getExploration());
         values.put(KEY_EX,session.getExploration());
 
         db.insert(TABLE_SESSIONS, null, values);
@@ -90,7 +92,7 @@ public class Database extends SQLiteOpenHelper {
             cursor.moveToFirst();
 
         Session session = new Session(Integer.parseInt(cursor.getString(0)),
-                (cursor.getInt(1)==1), Float.parseFloat(cursor.getString(2)), Float.parseFloat(cursor.getString(3)));
+                (cursor.getInt(1)==1), Float.parseFloat(cursor.getString(2)), cursor.getString(3)!=null?Float.parseFloat(cursor.getString(3)):0.0f);
         db.close();
         return session;
     }
@@ -101,12 +103,14 @@ public class Database extends SQLiteOpenHelper {
         String selectQuery = "SELECT  * FROM " + TABLE_SESSIONS;
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery,null);
+        float time;
         if (cursor.moveToFirst()) {
             do {
                 Session session = new Session();
                 session.setId(Integer.parseInt(cursor.getString(0)));
                 session.setResult(Integer.parseInt(cursor.getString(1)) == 1);
-                session.setTime(Float.parseFloat(cursor.getString(2)));
+                time = (cursor.getString(2)!=null)?Float.parseFloat(cursor.getString(2)):0.0f;
+                session.setTime(time);
                 session.setExploration(Float.parseFloat(cursor.getString(3)));
                 sessionList.add(session);
             } while (cursor.moveToNext());
@@ -136,6 +140,38 @@ public class Database extends SQLiteOpenHelper {
         return cursor.getCount();
     }
 
+    public float getBestTime(){
+        String query = "SELECT  MIN("+KEY_TIME+")" + " FROM " + TABLE_SESSIONS;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query,null);
+        cursor.moveToFirst();
+        return cursor.getFloat(0);
+    }
+
+    public float getAverageTime(){
+        String query = "SELECT  AVG("+KEY_TIME+")" + " FROM " + TABLE_SESSIONS;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query,null);
+        cursor.moveToFirst();
+        return cursor.getFloat(0);
+    }
+
+    public float getExplorationPercent(){
+        String query = "SELECT  AVG("+KEY_EX+")" + " FROM " + TABLE_SESSIONS;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query,null);
+        cursor.moveToFirst();
+        float EX = cursor.getFloat(0);
+        Log.d("EX",""+EX);
+        float EX_100 = EX*100.0f;
+        Log.d("EX_100",""+EX_100);
+        String EX_STR = String.format("%.2f",EX_100);
+        Log.d("EX_STR",EX_STR);
+        float GET_EX = Float.parseFloat(EX_STR);
+        Log.d("GET_EX",""+GET_EX);
+        return GET_EX;
+    }
+
     // Deleting single session
     public void deleteAllSessions() {
         List<Session> sessionList = getAllSessions();
@@ -146,5 +182,6 @@ public class Database extends SQLiteOpenHelper {
         }
         db.close();
     }
+
     
 }
