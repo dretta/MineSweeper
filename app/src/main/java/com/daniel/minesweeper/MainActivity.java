@@ -3,9 +3,11 @@ package com.daniel.minesweeper;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.ContactsContract;
@@ -29,8 +31,12 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity {
 
+    private ActionBar actionBar;
     private boolean mInit = false;
+    private boolean showIcon = true;
+    private Menu m;
     private Fragment gridFragment;
+    private SettingsFragment settingsFragment;
     public ImageButton startButton;
     public TextView gameTimer;
     public TextView mineCount;
@@ -40,12 +46,15 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-        final ActionBar actionBar = getActionBar();
+        settingsFragment = new SettingsFragment();
+        actionBar = getActionBar();
+        actionBar.setTitle("Settings");
         actionBar.setCustomView(R.layout.actionbar);
-        actionBar.setDisplayShowTitleEnabled(false);
+        //actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setDisplayShowHomeEnabled(false);
+        //actionBar.setBackgroundDrawable(new ColorDrawable(Color.BLACK));
         ViewGroup actionBarViews = (ViewGroup)actionBar.getCustomView();
         startButton = (ImageButton)(actionBarViews.findViewById(R.id.actionBarLogo));
         mineCount = (TextView)actionBarViews.findViewById(R.id.topTextViewLeft);
@@ -119,7 +128,27 @@ public class MainActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        m = menu;
         return true;
+    }
+
+    private void openSettings(){
+        showIcon = false;
+        onPrepareOptionsMenu(m);
+        actionBar.setDisplayShowCustomEnabled(false);
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
+        ft.remove(gridFragment).add(android.R.id.content, settingsFragment).commit();
+
+    }
+
+    private void closeSettings(){
+        showIcon = true;
+        onPrepareOptionsMenu(m);
+        actionBar.setDisplayShowCustomEnabled(true);
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
+        ft.remove(settingsFragment).add(android.R.id.content, gridFragment).commit();
     }
 
     @Override
@@ -131,9 +160,24 @@ public class MainActivity extends Activity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            openSettings();
+            return true;
+        }
+        else if(id == R.id.backButton){
+            closeSettings();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem item= menu.findItem(R.id.action_settings);
+        item.setVisible(showIcon);
+        item = menu.findItem(R.id.backButton);
+        item.setVisible(!showIcon);
+        Log.d("Prepare",""+showIcon);
+        return super.onPrepareOptionsMenu(menu);
     }
 }
