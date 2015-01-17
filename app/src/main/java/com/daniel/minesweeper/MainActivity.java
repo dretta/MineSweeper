@@ -5,11 +5,13 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -28,6 +30,8 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import java.util.Map;
+
 
 public class MainActivity extends Activity {
 
@@ -35,11 +39,12 @@ public class MainActivity extends Activity {
     private boolean mInit = false;
     private boolean showIcon = true;
     private Menu m;
-    private Fragment gridFragment;
+    private GridFragment gridFragment;
     private SettingsFragment settingsFragment;
     public ImageButton startButton;
     public TextView gameTimer;
     public TextView mineCount;
+    public boolean isVibrating;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,12 +139,25 @@ public class MainActivity extends Activity {
 
     private void openSettings(){
         showIcon = false;
+        gridFragment.pauseTimer();
         onPrepareOptionsMenu(m);
         actionBar.setDisplayShowCustomEnabled(false);
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
-        ft.remove(gridFragment).add(android.R.id.content, settingsFragment).commit();
+        ft.hide(gridFragment);
+        ft.add(android.R.id.content, settingsFragment).commit();
+        //ft.replace(android.R.id.content,settingsFragment);
+    }
 
+    private void updateSettings(){
+
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        Map<String, ?> map = sharedPrefs.getAll();
+        for (Map.Entry<String, ?> entry : map.entrySet()) {
+            Log.d("map values", entry.getKey() + ": " + entry.getValue().toString());
+        }
+        isVibrating = (Boolean)map.get("vibration");
     }
 
     private void closeSettings(){
@@ -148,7 +166,10 @@ public class MainActivity extends Activity {
         actionBar.setDisplayShowCustomEnabled(true);
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
-        ft.remove(settingsFragment).add(android.R.id.content, gridFragment).commit();
+        ft.show(gridFragment);
+        ft.remove(settingsFragment).commit();
+        //ft.replace(android.R.id.content,gridFragment);
+        gridFragment.resumeTimer();
     }
 
     @Override
@@ -164,6 +185,7 @@ public class MainActivity extends Activity {
             return true;
         }
         else if(id == R.id.backButton){
+            updateSettings();
             closeSettings();
             return true;
         }
@@ -177,7 +199,6 @@ public class MainActivity extends Activity {
         item.setVisible(showIcon);
         item = menu.findItem(R.id.backButton);
         item.setVisible(!showIcon);
-        Log.d("Prepare",""+showIcon);
         return super.onPrepareOptionsMenu(menu);
     }
 }

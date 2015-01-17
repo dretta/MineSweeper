@@ -4,10 +4,10 @@
     android:title="Settings"
     >
 
-    <CheckBoxPreference
-        android:key="pref_sync"
-        android:title="Checkbox"
-        android:summary="Testing"
+    <SwitchPreference
+        android:key="vibration"
+        android:title="Vibration"
+        android:summary=""
         android:defaultValue="true" />
     <!--
     <ListPreference

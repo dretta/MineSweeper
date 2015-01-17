@@ -10,6 +10,7 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.os.Handler;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -36,9 +37,10 @@ public class GridFragment extends Fragment {
     GridLayout gridLayout;
     public enum GameState{READY, PLAYING, WIN, LOSE}
     GameState gameState;
-    long gameTime, milliseconds;
+    long gameTime, milliseconds, savedTime;
     MainActivity mainActivity;
     int remainingMines, numOfMines, unOpenedButtons, flagsOnMines, numOfButtons;
+    Vibrator v;
 
     static Handler timerHandler = new Handler();
     Runnable timerRunnable = new Runnable() {
@@ -50,6 +52,7 @@ public class GridFragment extends Fragment {
             if(seconds > 999)
                 seconds = 999;
             TextView textView = ((MainActivity)getActivity()).gameTimer;
+
 
             mainActivity.setText(seconds, textView);
             timerHandler.postDelayed(this, 500);
@@ -65,6 +68,7 @@ public class GridFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_grid, container, false);
         mainActivity = (MainActivity)getActivity();
         gameState = GameState.READY;
+        savedTime = 0;
         numOfMines = 5;
         remainingMines = numOfMines;
         numOfButtons = 144;
@@ -72,6 +76,7 @@ public class GridFragment extends Fragment {
         gridLayout = (GridLayout)view.findViewById(R.id.grid);
         MButton[] buttons = generateGrid(numOfButtons,numOfMines);
         unOpenedButtons = numOfButtons - numOfMines;
+        v = (Vibrator) mainActivity.getSystemService(Context.VIBRATOR_SERVICE);
         for(MButton mButton:buttons){
             gridLayout.addView(mButton);
         }
@@ -218,7 +223,10 @@ public class GridFragment extends Fragment {
             MButton mb = (MButton)gridLayout.getChildAt(i);
             mb.setOnTouchListener(null);
         }
-
+        if(mainActivity.isVibrating) {
+            Log.d("vibrating","vibrating");
+            v.vibrate(500);
+        }
         ViewGroup.LayoutParams params = gridLayout.getLayoutParams();
         ScrollView vertical = (ScrollView)getActivity().findViewById(R.id.verticalScroll);
         HorizontalScrollView horizontal = (HorizontalScrollView)getActivity().findViewById(R.id.horizontalScroll);
@@ -248,4 +256,17 @@ public class GridFragment extends Fragment {
         });
     }
 
+    public void pauseTimer(){
+        if(gameState == GameState.PLAYING) {
+            timerHandler.removeCallbacks(timerRunnable);
+            savedTime = milliseconds;
+        }
+    }
+
+    public void resumeTimer(){
+        if(gameState == GameState.PLAYING) {
+            gameTime = System.currentTimeMillis() - savedTime;
+            timerHandler.postDelayed(timerRunnable, 0);
+        }
+    }
 }
