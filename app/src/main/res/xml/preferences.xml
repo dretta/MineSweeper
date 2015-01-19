@@ -9,14 +9,18 @@
         android:title="Vibration"
         android:summary=""
         android:defaultValue="true" />
+    <com.daniel.minesweeper.SeekBarPreference
+        android:key="pref_balance"
+        android:title="Hold Duration" />
     <!--
     <ListPreference
-        android:dependency="pref_sync"
-        android:key="pref_syncConnectionType"
-        android:title="A List"
-        android:dialogTitle="Title for dialog"
-        android:entries="@array/pref_syncConnectionTypes_entries"
-        android:entryValues="@array/pref_syncConnectionTypes_values"
-        android:defaultValue="@string/pref_syncConnectionTypes_default" />
-        -->
+        android:key="difficulty_"
+        android:title="Difficulty"
+        android:defaultValue="2"
+        android:summary="It will apply to new games."
+        android:entries="@array/updateInterval"
+        android:entryValues="@array/updateIntervalValues"
+
+        />
+    -->
 </PreferenceScreen>

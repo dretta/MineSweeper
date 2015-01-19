@@ -21,6 +21,7 @@ public class Session{
         this._id = id;
         this._result = result;
         this._exploration = exploration;
+
     }
 
     public int getId(){

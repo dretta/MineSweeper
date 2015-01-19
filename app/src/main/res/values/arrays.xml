@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="updateInterval">
+        <item name="0">Beginner</item>
+        <item name="1">Intermediate</item>
+        <item name="2">Advanced</item>
+        <item name="3">Custom</item>
+    </string-array>
+
+    <string-array name="updateIntervalValues">
+        <item name="1">0</item>
+        <item name="2">2</item>
+        <item name="3">30</item>
+        <item name="4">40</item>
+    </string-array>
+</resources>
