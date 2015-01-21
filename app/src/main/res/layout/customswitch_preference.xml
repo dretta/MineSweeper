@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/seekBar_frame"
+    android:id="@+id/switch_frame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     >
 
     <TextView
-        android:id="@+id/seekBar_title"
+        android:id="@+id/switch_title"
         android:textSize="18sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -15,20 +15,11 @@
         android:layout_alignParentStart="true"/>
 
 
-    <SeekBar
-        android:id="@+id/seekBar_pref"
-        android:layout_width="200dip"
-        android:layout_height="wrap_content"
-        android:max="2900"
-        android:layout_alignParentEnd="true"
-        />
-
-    <TextView
+    <Switch
+        android:id="@+id/switch_pref"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="0ms"
-        android:id="@+id/textView"
-        android:layout_alignBottom="@+id/seekBar_title"
-        android:layout_toStartOf="@+id/seekBar_pref" />
+        android:layout_alignParentEnd="true"
+        />
 
 </RelativeLayout>

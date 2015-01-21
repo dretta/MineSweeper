@@ -40,7 +40,7 @@ public class MainActivity extends Activity {
     private boolean showIcon = true;
     private Menu m;
     private GridFragment gridFragment;
-    private SettingsFragment settingsFragment;
+    public SettingsFragment settingsFragment;
     public ImageButton startButton;
     public TextView gameTimer;
     public TextView mineCount;

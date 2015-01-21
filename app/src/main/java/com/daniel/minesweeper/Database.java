@@ -114,7 +114,6 @@ public class Database extends SQLiteOpenHelper {
                 session.setExploration(Float.parseFloat(cursor.getString(3)));
                 sessionList.add(session);
             } while (cursor.moveToNext());
-
         }
         db.close();
         return sessionList;

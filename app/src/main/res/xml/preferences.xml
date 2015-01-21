@@ -8,10 +8,13 @@
         android:key="vibration"
         android:title="Vibration"
         android:summary=""
-        android:defaultValue="true" />
+        android:defaultValue="true"/>
+
+    <!--
     <com.daniel.minesweeper.SeekBarPreference
         android:key="pref_balance"
         android:title="Hold Duration" />
+    -->
     <!--
     <ListPreference
         android:key="difficulty_"
