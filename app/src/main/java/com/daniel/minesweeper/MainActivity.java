@@ -153,7 +153,7 @@ public class MainActivity extends Activity {
         if (!mInit) {
             mInit = true;
             Database db = new Database(this);
-            db.deleteAllSessions();
+            //db.deleteAllSessions();
             //this.deleteDatabase(db.getDatabaseName());
             db.close();
             startGame();
@@ -192,7 +192,12 @@ public class MainActivity extends Activity {
         }
         */
         //isVibrating = (Boolean)map.get("vibration");
-        difficulty = Integer.parseInt((String)map.get("difficulty_"));
+        try {
+            difficulty = Integer.parseInt((String) map.get("difficulty_"));
+        } catch(Exception e){
+            difficulty = 0;
+        }
+
         //difficulty = sharedPrefs.getInt("difficulty_",0);
         //Log.d("Difficulty",""+difficulty);
 
