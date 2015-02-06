@@ -27,6 +27,7 @@ public class Database extends SQLiteOpenHelper {
 
     // Sessions Table Columns names
     private static final String KEY_ID = "id";
+    private static final String KEY_DIFF = "difficulty";
     private static final String KEY_RESULT = "result";
     private static final String KEY_TIME = "time";
     private static final String KEY_EX = "exploration";
@@ -44,6 +45,7 @@ public class Database extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String CREATE_SESSIONS_TABLE = "CREATE TABLE " + TABLE_SESSIONS + "("
                 + KEY_ID + INTEGER_TYPE + " PRIMARY KEY" + COMMA_SEP
+                + KEY_DIFF + INTEGER_TYPE + COMMA_SEP
                 + KEY_RESULT + INTEGER_TYPE + COMMA_SEP
                 + KEY_TIME + REAL_TYPE + COMMA_SEP
                 + KEY_EX + REAL_TYPE + ")";
@@ -73,9 +75,10 @@ public class Database extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(KEY_ID,session.getId());
+        values.put(KEY_DIFF,session.getDifficulty());
         values.put(KEY_RESULT,session.getResult()?1:0);
         values.put(KEY_TIME,(session.getTime()!=0.0f?session.getTime():null));
-        Log.d("ADD_EX",""+session.getExploration());
+        //Log.d("ADD_EX",""+session.getExploration());
         values.put(KEY_EX,session.getExploration());
 
         db.insert(TABLE_SESSIONS, null, values);
@@ -85,14 +88,18 @@ public class Database extends SQLiteOpenHelper {
     // Getting single session
     public Session getSession(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_SESSIONS, new String[] { KEY_ID,
+        Cursor cursor = db.query(TABLE_SESSIONS, new String[] { KEY_ID, KEY_DIFF,
                         KEY_RESULT, KEY_TIME, KEY_EX }, KEY_ID + "=?",
                 new String[] { String.valueOf(id) }, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
-
-        Session session = new Session(Integer.parseInt(cursor.getString(0)),
-                (cursor.getInt(1)==1), Float.parseFloat(cursor.getString(2)), cursor.getString(3)!=null?Float.parseFloat(cursor.getString(3)):0.0f);
+        Log.d("cursor.getString(3)",""+cursor.getString(3));
+        Session session = new Session(
+                Integer.parseInt(cursor.getString(0)),
+                Integer.parseInt(cursor.getString(1)),
+                (cursor.getInt(2)==1),
+                cursor.getString(3)!=null?Float.parseFloat(cursor.getString(3)):0.0f,
+                Float.parseFloat(cursor.getString(4)));
         db.close();
         return session;
     }
@@ -108,10 +115,11 @@ public class Database extends SQLiteOpenHelper {
             do {
                 Session session = new Session();
                 session.setId(Integer.parseInt(cursor.getString(0)));
-                session.setResult(Integer.parseInt(cursor.getString(1)) == 1);
-                time = (cursor.getString(2)!=null)?Float.parseFloat(cursor.getString(2)):0.0f;
+                session.setDifficulty(Integer.parseInt(cursor.getString(1)));
+                session.setResult(Integer.parseInt(cursor.getString(2)) == 1);
+                time = (cursor.getString(3)!=null)?Float.parseFloat(cursor.getString(3)):0.0f;
                 session.setTime(time);
-                session.setExploration(Float.parseFloat(cursor.getString(3)));
+                session.setExploration(Float.parseFloat(cursor.getString(4)));
                 sessionList.add(session);
             } while (cursor.moveToNext());
         }
@@ -120,9 +128,9 @@ public class Database extends SQLiteOpenHelper {
     }
 
     // Getting All Sessions with the same result
-    public int getAllSessionsCountByResult(boolean result) {
+    public int getAllSessionsCountByResult(boolean result, int d) {
         List<Session> sessionList = new ArrayList<Session>();
-        String countQuery = "SELECT  * FROM " + TABLE_SESSIONS + " WHERE " + KEY_RESULT + " = " + (result?1:0);
+        String countQuery = "SELECT  * FROM " + TABLE_SESSIONS + " WHERE " + KEY_RESULT + " = " + (result?1:0) + " AND " + KEY_DIFF + "=" + d;
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(countQuery,null);
         //db.close();
@@ -131,8 +139,11 @@ public class Database extends SQLiteOpenHelper {
 
 
     // Getting sessions Count
-    public int getSessionsCount() {
-        String countQuery = "SELECT  * FROM " + TABLE_SESSIONS;
+    public int getSessionsCount(int d) {
+        String countQuery;
+        if(d == -1)
+            countQuery = "SELECT  * FROM " + TABLE_SESSIONS;
+        else countQuery = "SELECT  * FROM " + TABLE_SESSIONS + " WHERE " + KEY_DIFF + " = " + d;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
         //cursor.close();
@@ -140,35 +151,35 @@ public class Database extends SQLiteOpenHelper {
         return cursor.getCount();
     }
 
-    public float getBestTime(){
-        String query = "SELECT  MIN("+KEY_TIME+")" + " FROM " + TABLE_SESSIONS;
+    public float getBestTime(int d){
+        String query = "SELECT  MIN("+KEY_TIME+")" + " FROM " + TABLE_SESSIONS + " WHERE " + KEY_DIFF + " = " + d;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(query,null);
         cursor.moveToFirst();
         return cursor.getFloat(0);
     }
 
-    public float getAverageTime(){
-        String query = "SELECT  AVG("+KEY_TIME+")" + " FROM " + TABLE_SESSIONS;
+    public float getAverageTime(int d){
+        String query = "SELECT  AVG("+KEY_TIME+")" + " FROM " + TABLE_SESSIONS + " WHERE " + KEY_DIFF + " = " + d;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(query,null);
         cursor.moveToFirst();
         return cursor.getFloat(0);
     }
 
-    public float getExplorationPercent(){
-        String query = "SELECT  AVG("+KEY_EX+")" + " FROM " + TABLE_SESSIONS;
+    public float getExplorationPercent(int d){
+        String query = "SELECT  AVG("+KEY_EX+")" + " FROM " + TABLE_SESSIONS + " WHERE " + KEY_DIFF + " = " + d;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(query,null);
         cursor.moveToFirst();
         float EX = cursor.getFloat(0);
-        Log.d("EX",""+EX);
+        //Log.d("EX",""+EX);
         float EX_100 = EX*100.0f;
-        Log.d("EX_100",""+EX_100);
+        //Log.d("EX_100",""+EX_100);
         String EX_STR = String.format("%.2f",EX_100);
-        Log.d("EX_STR",EX_STR);
+        //Log.d("EX_STR",EX_STR);
         float GET_EX = Float.parseFloat(EX_STR);
-        Log.d("GET_EX",""+GET_EX);
+        //Log.d("GET_EX",""+GET_EX);
         return GET_EX;
     }
 

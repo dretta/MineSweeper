@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -17,6 +18,7 @@ import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 /**
  * Created by Daniel on 11/13/2014.
@@ -24,6 +26,7 @@ import android.widget.LinearLayout;
 
 public class MButton extends Button {
 
+    public static boolean debug = false;
     public enum State{NORMAL, OPENED, FLAGGED, UNKNOWN}
     State state;
     boolean longPress;
@@ -87,7 +90,8 @@ public class MButton extends Button {
         }
         else if(state == State.NORMAL){
             state = State.FLAGGED;
-            setText("F");
+            setText("");
+            setBackgroundResource(R.drawable.flag);
             gridFragment.remainingMines--;
             if(isMine()){
                 gridFragment.flagsOnMines++;
@@ -114,8 +118,10 @@ public class MButton extends Button {
     }
 
     public void displayMines(){
-        if(mine)
-            setText("M");
+        if(mine){
+            setText("");
+            setBackgroundResource(R.drawable.mine);
+        }
         else if(hasAdjacentMines())
             setText(""+adjacentMines);
         else
@@ -128,35 +134,101 @@ public class MButton extends Button {
 
     public boolean hasAdjacentMines(){ return getAdjacentMines() > 0;}
 
-    private void openAdjacentButtons(){
+    private void openAdjacentButtons()throws Exception{
 
         GridLayout gridLayout = gridFragment.gridLayout;
         int rows = gridLayout.getRowCount();
         int columns = gridLayout.getColumnCount();
-        if((num/columns) > 0){((MButton)gridLayout.getChildAt(num-columns)).revealButton();}
-        if((num/columns) < rows-1){((MButton)gridLayout.getChildAt(num+columns)).revealButton();}
-        if((num%rows) > 0){((MButton)gridLayout.getChildAt(num-1)).revealButton();}
-        if((num%rows) < columns-1){((MButton)gridLayout.getChildAt(num+1)).revealButton();}
-        if( ((num/columns) > 0)&&((num%rows) > 0) ){((MButton)gridLayout.getChildAt(num-columns-1)).revealButton();}
-        if( ((num/columns) < rows-1)&&((num%rows) > 0) ){((MButton)gridLayout.getChildAt(num+columns-1)).revealButton();}
-        if( ((num/columns) > 0)&&((num%rows) < columns-1) ){((MButton)gridLayout.getChildAt(num-columns+1)).revealButton();}
-        if( ((num/columns) < rows-1)&&((num%rows) < columns-1) ){((MButton)gridLayout.getChildAt(num+columns+1)).revealButton();}
+        MButton m;
+        if((num/columns) > 0){
+            m = ((MButton)gridLayout.getChildAt(num-columns));
+            if(m!=null)m.revealButton();
+            else throw new Exception("Button at "+(num-columns)+" is null, coming from "+ num);
+        }
+        if((num/columns) < rows-1){
+            m = ((MButton)gridLayout.getChildAt(num+columns));
+            if(m!=null)m.revealButton();
+            else throw new Exception("Button at "+(num+columns)+" is null, coming from "+ num);
+        }
+        if((num%columns) > 0){
+            m = ((MButton)gridLayout.getChildAt(num-1));
+            if(m!=null)m.revealButton();
+            else throw new Exception("Button at "+(num-1)+" is null, coming from "+ num);
+        }
+        if((num%columns) < columns-1){
+            m = ((MButton)gridLayout.getChildAt(num+1));
+            if(m!=null)m.revealButton();
+            else throw new Exception("Button at "+(num+1)+" is null, coming from "+ num);
+        }
+        if( ((num/columns) > 0)&&((num%columns) > 0) ){
+            m = ((MButton)gridLayout.getChildAt(num-columns-1));
+            if(m!=null)m.revealButton();
+            else throw new Exception("Button at "+(num-columns-1)+" is null, coming from "+ num);
+        }
+        if( ((num/columns) < rows-1)&&((num%columns) > 0) ){
+            m = ((MButton)gridLayout.getChildAt(num+columns-1));
+            if(m!=null)m.revealButton();
+            else throw new Exception("Button at "+(num+columns-1)+" is null, coming from "+ num);
+        }
+        if( ((num/columns) > 0)&&((num%columns) < columns-1) ){
+            m = ((MButton)gridLayout.getChildAt(num-columns+1));
+            if(m!=null)m.revealButton();
+            else throw new Exception("Button at "+(num-columns+1)+" is null, coming from "+ num);
+        }
+        if( ((num/columns) < rows-1)&&((num%columns) < columns-1) ){
+            m = ((MButton)gridLayout.getChildAt(num+columns+1));
+            if(m!=null)m.revealButton();
+            else throw new Exception("Button at "+(num+columns+1)+" is null, coming from "+ num);
+        }
 
     }
 
-    public void revealButton() {
+    public void revealButton() throws Exception {
         if (state != State.OPENED){
             state = State.OPENED;
             gridFragment.unOpenedButtons--;
+            setBackgroundResource(R.drawable.tile3);
             displayMines();
             if (!isMine() && !hasAdjacentMines())
                 openAdjacentButtons();
             else if(isMine()){
-                Log.d("","gameLost");
+                //Log.d("","gameLost");
                 gridFragment.gameLost();
             }
-            setBackgroundResource(R.drawable.tile3);
 
+
+        }
+    }
+
+    public void setTextColor() {
+        switch(adjacentMines) {
+            case 1:
+                super.setTextColor(Color.BLUE);
+                break;
+            case 2:
+                super.setTextColor(Color.GREEN);
+                break;
+            case 3:
+                super.setTextColor(Color.RED);
+                break;
+            case 4:
+                super.setTextColor(Color.rgb(0,0,128));
+                break;
+            case 5:
+                super.setTextColor(Color.rgb(128,0,0));
+                break;
+            case 6:
+                super.setTextColor(Color.rgb(64,224,208));
+                break;
+            case 7:
+                super.setTextColor(Color.BLACK);
+                break;
+            case 8:
+                super.setTextColor(Color.LTGRAY);
+                break;
+            default:
+                super.setTextColor(Color.WHITE);
+                break;
         }
     }
 
@@ -166,9 +238,13 @@ public class MButton extends Button {
         mine = m;
         setBackgroundResource(R.drawable.tile);
         setLayoutParams(new LinearLayout.LayoutParams(150,150));
+        setTypeface(Typeface.createFromAsset(mainActivity.getAssets(), "fonts/Comic-Sans.ttf"));
+        setTextColor();
 
-        if(mine){
-            setText("m");
+        if(MainActivity.debug) {
+            if (mine) {
+                setText("m");
+            }
         }
 
 
@@ -194,7 +270,11 @@ public class MButton extends Button {
                                 switch(state){
                                     case NORMAL:{
                                         //Log.d("","revealButton");
-                                        revealButton();
+                                        try {
+                                            revealButton();
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
                                         break;
                                     }
                                     case UNKNOWN:{
@@ -204,8 +284,8 @@ public class MButton extends Button {
                                             gridFragment.flagsOnMines++;
                                         }
                                         mainActivity.setText(gridFragment.remainingMines,mainActivity.mineCount);
-                                        v.setBackgroundResource(R.drawable.tile);
-                                        setText("F");
+                                        setText("");
+                                        v.setBackgroundResource(R.drawable.flag);
                                         break;
                                     }
                                     case FLAGGED:{
@@ -215,8 +295,8 @@ public class MButton extends Button {
                                             gridFragment.flagsOnMines--;
                                         }
                                         mainActivity.setText(gridFragment.remainingMines,mainActivity.mineCount);
-                                        v.setBackgroundResource(R.drawable.tile);
-                                        setText("?");
+                                        setText("");
+                                        v.setBackgroundResource(R.drawable.question_mark);
                                     }
                                 }
                             }

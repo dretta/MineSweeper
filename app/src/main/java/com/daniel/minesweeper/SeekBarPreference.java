@@ -34,7 +34,7 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
     @Override
     protected View onCreateView( ViewGroup parent ){
         relativeLayout = ((RelativeLayout)(((MainActivity) getContext()).findViewById(R.id.seekBar_frame)));
-        //sb = (SeekBar)(relativeLayout.getChildAt(1));
+        //sb = (SeekBar)(((RelativeLayout)(((MainActivity) getContext()).findViewById(R.id.seekBar_frame))).getChildAt(1));
         LayoutInflater li = (LayoutInflater)getContext().getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         return li.inflate( R.layout.seekbar_preference, parent, false);
     }

@@ -4,26 +4,27 @@
     android:title="Settings"
     >
 
-    <SwitchPreference
+    <!--
+    <com.daniel.minesweeper.CustomSwitchPreference
         android:key="vibration"
         android:title="Vibration"
         android:summary=""
         android:defaultValue="true"/>
 
-    <!--
+
     <com.daniel.minesweeper.SeekBarPreference
         android:key="pref_balance"
         android:title="Hold Duration" />
     -->
-    <!--
-    <ListPreference
+
+    <com.daniel.minesweeper.DifficultyPreference
         android:key="difficulty_"
         android:title="Difficulty"
-        android:defaultValue="2"
+        android:defaultValue="0"
         android:summary="It will apply to new games."
         android:entries="@array/updateInterval"
         android:entryValues="@array/updateIntervalValues"
 
         />
-    -->
+
 </PreferenceScreen>

@@ -11,6 +11,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.util.DisplayMetrics;
@@ -35,16 +36,19 @@ import java.util.Map;
 
 public class MainActivity extends Activity {
 
+    public static final boolean debug = false;
     private ActionBar actionBar;
     private boolean mInit = false;
     private boolean showIcon = true;
     private Menu m;
     private GridFragment gridFragment;
+    private int difficulty;
     public SettingsFragment settingsFragment;
     public ImageButton startButton;
     public TextView gameTimer;
     public TextView mineCount;
     public boolean isVibrating;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +56,7 @@ public class MainActivity extends Activity {
 
         setContentView(R.layout.activity_main);
         settingsFragment = new SettingsFragment();
+        updateSettings();
         actionBar = getActionBar();
         actionBar.setTitle("Settings");
         actionBar.setCustomView(R.layout.actionbar);
@@ -97,16 +102,41 @@ public class MainActivity extends Activity {
 
     public void restartGame() {
         startButton.setImageResource(R.drawable.smiley);
+        gridFragment.timerHandler.removeCallbacks(gridFragment.timerRunnable);
         getFragmentManager().beginTransaction().remove(gridFragment).commit();
+        gridFragment = null;
         setText(999, gameTimer);
         startGame();
     }
 
     private void startGame(){
+        Bundle b = new Bundle(1);
+        /*
+        Log.d("difficulty",""+difficulty);
+        switch(difficulty){
+            case 1:{
+                b.putInt("rows",16);
+                b.putInt("columns",16);
+                b.putInt("mines",40);
+                break;
+            }
+            case 2:{
+                b.putInt("rows",30);
+                b.putInt("columns",16);
+                b.putInt("mines",99);
+                break;
+            }
+            default:{
+                b.putInt("rows",10);
+                b.putInt("columns",9);
+                b.putInt("mines",10);
+            }
+        }
+        */
 
         gridFragment = new GridFragment();
-
-        gridFragment.setArguments(getIntent().getExtras());
+        b.putInt("difficulty",difficulty);
+        gridFragment.setArguments(b);
 
         getFragmentManager().beginTransaction().add(R.id.fragment_container, gridFragment,"gridFragment").commit();
 
@@ -124,6 +154,7 @@ public class MainActivity extends Activity {
             mInit = true;
             Database db = new Database(this);
             db.deleteAllSessions();
+            //this.deleteDatabase(db.getDatabaseName());
             db.close();
             startGame();
         }
@@ -152,12 +183,19 @@ public class MainActivity extends Activity {
     private void updateSettings(){
 
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        //sharedPrefs = getPreferences(MODE_PRIVATE);
 
         Map<String, ?> map = sharedPrefs.getAll();
+        /*
         for (Map.Entry<String, ?> entry : map.entrySet()) {
             Log.d("map values", entry.getKey() + ": " + entry.getValue().toString());
         }
-        isVibrating = (Boolean)map.get("vibration");
+        */
+        //isVibrating = (Boolean)map.get("vibration");
+        difficulty = Integer.parseInt((String)map.get("difficulty_"));
+        //difficulty = sharedPrefs.getInt("difficulty_",0);
+        //Log.d("Difficulty",""+difficulty);
+
     }
 
     private void closeSettings(){
